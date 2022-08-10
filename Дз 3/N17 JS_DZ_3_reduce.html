@@ -1,0 +1,15 @@
+<script>
+console.log(findVowels('ПровЕрка')); //3
+console.log(findVowels('ДОМАШНЕЕ задание')); //8
+function findVowels(str) {
+	let count=0;
+  	const vowels = ["а", "у", "о", "ы", "и", "э", "я", "ю", "ё", "е"];
+  	const strN = str.toLowerCase().split("");
+  	return strN.reduce((count, char) => {
+    if (vowels.includes(char)) {
+      count+= 1;
+    }
+    return count;
+  },0);
+}
+</script>

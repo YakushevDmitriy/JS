@@ -1,0 +1,55 @@
+<script>
+
+  function squareRoots(a, b, c) {
+
+    if (a === 0)
+      return [(-c) / b]; // если а=0 уравнение не является квадратным, а его единственный корень находится без дискримминанта.
+
+    const d = b * b - 4 * a * c; // дискриминант
+
+    if (d < 0)
+      return []; // нет корней
+
+    if (d == 0)
+      return [-b / (2 * a)]; // один корень
+
+    const x1 = (-b + Math.sqrt(d)) / (2 * a);
+    const x2 = (-b - Math.sqrt(d)) / (2 * a);
+    return [x1, x2]; // два корня
+  }
+
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chai/2.0.0/chai.js"></script>
+<script>
+  mocha.setup('bdd'); // техника "Behavior Driven Development", но мы ей на самом деле не следуем
+  const assert = chai.assert;
+</script>
+
+<div id="mocha"></div>
+
+<script>
+
+  describe('squareRoots - функция нахождения корней квадратного уравнения', function () {
+
+    const testSet = [
+      { a: 1, b: -2, c: -3, roots: [3, -1] },
+      { a: 1, b: 12, c: 36, roots: [-6] },
+      { a: 1, b: 1, c: 1, roots: [] },
+      { a: -1, b: -2, c: 15, roots: [-5, 3] },
+      { a: 0, b: 5, c: -10, roots: [2] },
+    ];
+
+    for (let test of testSet) {
+      it(`находит корни при a=${test.a} b=${test.b} c=${test.c} и они равны [${test.roots.join(",")}]`, function () {
+        const roots = squareRoots(test.a, test.b, test.c);
+        assert.deepEqual(roots, test.roots);
+      });
+    }
+
+  });
+
+  mocha.run();
+</script>

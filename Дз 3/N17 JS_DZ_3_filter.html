@@ -1,0 +1,10 @@
+<script>
+console.log(findVowels('ПровЕрка')); //3
+console.log(findVowels('ДОМАШНЕЕ задание')); //8
+function findVowels(str) {
+  	const vowels = ["а", "у", "о", "ы", "и", "э", "я", "ю", "ё", "е"];
+  	const strN = str.toLowerCase().split("");
+  	var count=strN.filter((char)=>vowels.includes(char));
+  	return count.length
+  }
+</script>

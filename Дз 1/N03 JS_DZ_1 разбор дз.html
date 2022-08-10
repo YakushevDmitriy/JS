@@ -1,0 +1,55 @@
+<script>
+let fam=promt("Введите фамилию?");
+while (fam===""||fam===nul){
+	fam=promt("Фамилия должна состояизь из условие")
+}
+ЛИБО ЭТОТ ЖЕ КОД стр 1-4
+let fam
+do {
+	fam=promt("Введите фамилию?");
+while (fam===""||fam===nul);
+}
+ЛИБО ЭТОТ ЖЕ КОД стр 6-10
+do {
+	 var fam=promt("ВВедите фамилию?");
+while (fam===""||fam===nul);
+}
+ИБО ЭТОТ ЖЕ КОД стр 12-15
+do {
+	 var fam=promt("Введите фамилию?");
+while (!fam);
+}
+
+do {
+	 var name2=promt("Введите имя?");
+while (!name2);
+}
+
+do {
+	 var otch=promt("Введите отчество?");
+while (!otch);
+}
+
+do {
+	 var ageS=promt("Введите возраст?");
+	 var age=parsInt(ageS)
+while (!isNaN(age));
+}
+
+let pens=gender?
+	((pens>65)?"да":"нет")
+	:
+	((pens>60)?"да":"нет");
+
+	ЛИБО ЭТОТ ЖЕ КОД стр 38-41
+	let pensLimit=gender?65:60;
+	let pens=((age>pensLimit)?"да":"нет");
+
+
+alert(
+	"ваше ФИО: "+fam+" "+name2+" "+otch+"\n"+
+"ваш возраст в годах: "+age+"\n"+
+"ваш возраст в днях: "+(age*365)+"\n"+
+"через 5 лет вам будет: "+(age+5)+"\n"+
+"ваш пол: "+((gender)?"М":"Ж")
+"вы на пенсии: "+pens)

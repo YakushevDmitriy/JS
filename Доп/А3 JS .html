@@ -1,0 +1,34 @@
+<script>
+"use strict"
+function checkPolindrom(str) {
+  const string = str.toLowerCase(); // приводим к нижнему регистру 
+  let string1="";
+  let rez;
+  const letters = "абвгдеёжзийклмнопрстуфхцчшщыэюя";
+  for (let charts of string) { // получаем новую строку содержащую только русские символы (без пробелов,знаков припенания,без твердого и мягкого знака)
+    if (letters.includes(charts)) { 
+      if (charts==='ё') // замена ё на е
+        charts='е';   
+      string1=string1+charts;
+    }
+  }
+  if (string1==='') 
+    return true
+  else {
+  for (let i = 0; i < (Math.floor((string1.length)/2)); i++) { //сравниваем соответствующие символы сначала и с конца строки, если хоть одна пара не совпадает выражение не является палиндромом
+    if (string1[i]===string1[string1.length-1-i]) 
+      rez=true;
+    else
+    return rez=false;
+    }
+  }
+  return rez;
+} 
+
+  let str=prompt('Введите выражение на русском языке чтобы проверить является ли оно полиндромом');
+ 
+  if (checkPolindrom(str))
+    alert('Введенное выражение - это палиндром');
+  else
+    alert('Введенное выражение - это не палиндром');
+</script>

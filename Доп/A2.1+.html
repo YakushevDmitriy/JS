@@ -1,0 +1,24 @@
+<script>
+    "use strict";
+    let str=prompt('Введите текст:');
+    function func(text) {
+        let i=0;
+        let n=0;
+
+        while (text[i]===' ')
+            i++;
+        if ((i!=0)&(i===text.length)) {// Если i не равно нулю, следовательно строка не пустая
+            console.log('Строка состоит только из пробелов!')
+            return ('')} // функция должна удалять все пробелы поэтому возвращаем не переменную text, а пустую строку           
+        else {
+            while (text[text.length-1-n]===' ') 
+            n++;}
+        if ((i===0)&(n===0)) {  //Строка пустая
+            console.log('Строка не содержит пробелов в начале или конце!')
+            return text;}
+        else
+            return text.slice(i,(text.length-n));
+            }
+    alert("*"+func(str)+"*")
+</script>
+

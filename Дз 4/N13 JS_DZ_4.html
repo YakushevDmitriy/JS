@@ -1,0 +1,69 @@
+<script>
+  "use strict"
+  function HashStorageFunc() {
+    var self = this;
+    self.storege = {};
+
+    self.addValue = function (key, value) {
+      self.storege[key] = value
+    };
+
+    self.getValue = function (key) {
+      return self.storege[key]
+    };
+
+    self.deleteValue = function (key) {
+      if (key in self.storege) {
+        delete self.storege[key];
+        return true;
+      }
+      else
+        return false;
+    };
+
+    self.getKeys = function () {
+      return Object.keys(self.storege);
+    };
+  };
+
+  let drinkStorage = new HashStorageFunc();
+
+  function addDrink() {
+    let k = prompt('Введите название напитка?');
+    let alc = confirm('Напиток алкогольный? Если нет, нажмите отмена');
+    let rec = prompt('Введите рецепт напитка?');
+    drinkStorage.addValue(k, { alc, rec });
+  };
+
+  function getInfo() {
+    let k = prompt('Введите название напитка информацию о котором желаете получить?');
+    let info = drinkStorage.getValue(k);
+    if (info)
+      alert('иформация о напитке: ' + k + '\n' +
+        'Алкогольный: ' + info.alc + '\n' +
+        'Рецепт: ' + info.rec);
+    else
+      alert('Информация о напитке ' + k + ' отсутствует');
+  };
+
+  function deleteInfo() {
+    let k = prompt('Введите название напитка информацию о котором желаете удалить?');
+    let del = drinkStorage.deleteValue(k)
+    if (del) {
+      alert('Информация о напитке удалена')
+    };
+    if (del === false) {
+      alert('Информация о напитке отсутствует');
+    };
+  };
+
+  function getAll() {
+    let All = drinkStorage.getKeys()
+    alert('Список всех напитков: ' + All)
+  };
+
+</script>
+<input type=button value='ввод информации о напитке' onclick='addDrink()'>
+<input type=button value='получение информации о напитке' onclick='getInfo()'>
+<input type=button value='удаление информации о напитке' onclick='deleteInfo()'>
+<input type=button value='перечень всех напитков' onclick='getAll()'>

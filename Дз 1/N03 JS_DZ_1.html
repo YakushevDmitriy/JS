@@ -1,0 +1,34 @@
+<script>
+    "use strict";
+    var lastname=prompt('Введите Вашу фамилию:');
+    while (Boolean(lastname)===false)
+        {lastname=prompt('Вы не ввели Вашу фамилию. Введиде фамилию снова:');}
+    var firstname=prompt('Введите Ваше имя:');
+    while (Boolean(firstname)===false)
+        {firstname=prompt('Вы не ввели Ваше имя. Введиде имя снова:');}
+    var patronymic=prompt('Введите Ваше отчество:');
+    while (Boolean(patronymic)===false)
+        {patronymic=prompt('Вы не ввели Ваше отчество. Введиде отчество снова:');}
+    var ageStr=prompt('Введите Ваш возраст:');
+    var age=parseFloat(ageStr);
+    while ((isNaN(age))===true)
+        {ageStr=prompt('Вы не ввели Ваш возраст, или возраст введен некоректно. Ведите возраст числом:');
+        var age=parseFloat(ageStr);}
+    var gender=confirm('Ваш пол - мужской? Нажмите ОТМЕНА если Вы женского пола');
+    if (gender==true)
+      var isgender='мужской';
+    else
+      var isgender='женский';
+    if ( (gender==true)&&(age>60) )
+       var pension='да'; 
+    else if ( (gender==false)&&(age>55) )
+    var pension='да';
+    else 
+      var pension='нет';    
+    alert (`ваше ФИО: ${lastname} ${firstname} ${patronymic}
+ваш возраст в годах: ${age}
+ваш возраст в днях: ${age*365}
+через 5 лет вам будет: ${age+5}
+ваш пол: ${isgender}
+вы на пенсии: ${pension}
+</script>

@@ -1,0 +1,15 @@
+<script>
+    "use strict";
+    let str=prompt('Введите текст:');
+    function func(text) {
+        let i=0;
+        let n=0;
+        while (text[i]===' ')
+            i++;
+        while (text[text.length-1-n]===' ') 
+            n++;
+        return text.slice(i,(text.length-n));
+            }
+    alert("*"+func(str)+"*")
+</script>
+
