@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Document</title>
+</head>
+
+<body>
+	<script>
+		function addForm() {
+			let fr = document.createElement("form");
+			document.body.appendChild(fr);
+		}
+		function DYN_FORM(def) {
+			addForm()
+			var elem = document.body.lastChild;
+			elem.action = ("https://fe.it-academy.by/TestForm.php")
+			let str;
+			let string = '';
+			let option = '';
+			let radios = '';
+			for (let i = 0; i < def.length; i++) {
+				switch (def[i].kind) {
+					case "longtext":
+						def[i].kind = ("text");
+						str = ("<label>" + def[i].label + "<input type='" + def[i].kind + "' name='" + def[i].name + "' size=100></label><br>");
+						string += str;
+						break;
+					case "shorttext":
+						def[i].kind = ("text");
+						str = ("<label>" + def[i].label + "<input type='" + def[i].kind + "' name='" + def[i].name + "'></label><br>");
+						string += str;
+						break;
+					case "number":
+						str = ("<label>" + def[i].label + "<input type='" + def[i].kind + "' name='" + def[i].name + "'></label><br>");
+						string += str;
+						break;
+					case "combo":
+						option = '';
+						for (let n = 0; n < def[i].variants.length; n++) {
+							option += ("<option value=" + def[i].variants[n].value + ">" + def[i].variants[n].text + "</option><br>")
+						}
+						str = ("<label>" + def[i].label + "<select name='" + def[i].name + "'>" + option + "</select></label><br>");
+						string += str;
+						break;
+					case "radio":
+						for (let m = 0; m < def[i].variants.length; m++) {
+							radios += (" <input type='" + def[i].kind + "' name='" + def[i].name + "' value=" + def[i].variants[m].value + ">" + def[i].variants[m].text)
+						}
+						str = ("<label>" + def[i].label + radios + "</label><br>");
+						string += str;
+						break;
+					case "check":
+						def[i].kind = ("checkbox");
+						str = ("<label>" + def[i].label + "<input type='" + def[i].kind + "' name='" + def[i].name + "'></label><br>");
+						string += str;
+						break;
+					case "memo":
+						def[i].kind = ("textarea");
+						str = ("<label>" + def[i].label + "<br><" + def[i].kind + " name='" + def[i].name + "'></" + def[i].kind + "></label><br>");
+						string += str;
+						break;
+					case "submit":
+						str = ("<input type='" + def[i].kind + "' value='" + def[i].caption + "'><br>");
+						string += str;
+						break;
+					default:
+						alert('Не существующий тип формы!');
+						break;
+				}
+			}
+			var s = elem.innerHTML
+			elem.innerHTML = s + string + "<hr>";
+		}
+		var formDef1 =
+			[
+				{ label: 'Название сайта:', kind: 'longtext', name: 'sitename' },
+				{ label: 'URL сайта:', kind: 'longtext', name: 'siteurl' },
+				{ label: 'Посетителей в сутки:', kind: 'number', name: 'visitors' },
+				{ label: 'E-mail для связи:', kind: 'shorttext', name: 'email' },
+				{
+					label: 'Рубрика каталога:', kind: 'combo', name: 'division',
+					variants: [{ text: 'здоровье', value: 1 }, { text: 'домашний уют', value: 2 }, { text: 'бытовая техника', value: 3 }]
+				},
+				{
+					label: 'Размещение:', kind: 'radio', name: 'payment',
+					variants: [{ text: 'бесплатное', value: 1 }, { text: 'платное', value: 2 }, { text: 'VIP', value: 3 }]
+				},
+				{ label: 'Разрешить отзывы:', kind: 'check', name: 'votes' },
+				{ label: 'Описание сайта:', kind: 'memo', name: 'description' },
+				{ caption: 'Опубликовать', kind: 'submit' },
+			];
+
+		var formDef2 =
+			[
+				{ label: 'Фамилия:', kind: 'longtext', name: 'lastname' },
+				{ label: 'Имя:', kind: 'longtext', name: 'firstname' },
+				{ label: 'Отчество:', kind: 'longtext', name: 'secondname' },
+				{ label: 'Возраст:', kind: 'number', name: 'age' },
+				{ caption: 'Зарегистрироваться', kind: 'submit' },
+			];
+		DYN_FORM(formDef1);
+
+		DYN_FORM(formDef2);
+	</script>
+
+</body>
+
+</html>
