@@ -184,31 +184,31 @@
 		Place1.addEventListener('input', validatePlace, false);
 		Place2.addEventListener('focus', retPlace, false);
 		Place3.addEventListener('focus', retPlace, false);
-		function validatePlace(eo) {
-			eo = eo || window.event;
-			let elem = document.getElementById('pLACE');
-			elem.innerHTML = ' Бесплатное только в мышеловке!) Выберите другой вариант!';
-			elem.style.color = 'red';
-			eo.preventDefault(); // форма не будет отправлена на сервер
-			return false;
-		}
+
 		function retPlace(eo) {
 			eo = eo || window.event;
 			let elem = document.getElementById('pLACE');
 			elem.innerHTML = '';
 			return true;
 		}
-		function noPlace(eo) {
+		function validatePlace(eo) {
 			eo = eo || window.event;
 			const PlaceField = formTag.elements.PLACE;
 			const PlaceValue = PlaceField.value;
-			let elemP = document.getElementById('pLACE');
+			let elem = document.getElementById('pLACE');
 			if (PlaceValue == "") {
-				elemP.innerHTML = ' Вы не выбрали тип размещения!';
-				elemP.style.color = 'red';
+				elem.innerHTML = ' Вы не выбрали тип размещения!';
+				elem.style.color = 'red';
 				eo.preventDefault(); // форма не будет отправлена на сервер
 				return false
 			}
+			if (PlaceValue == "1") {
+				elem.innerHTML = ' Бесплатное только в мышеловке!) Выберите другой вариант!';
+				elem.style.color = 'red';
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+			return true;
 		}
 
 		const Agree = document.getElementById('AGREE');
@@ -279,7 +279,7 @@
 					error[i] = 'Chapter.focus()';
 					i++;
 				}
-				if (!noPlace(eo) || validatePlace(eo)) {
+				if (!validatePlace(eo)) {
 					error[i] = 'document.getElementById("PLACE1").scrollIntoView()';
 					i++;
 				}
