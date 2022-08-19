@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>N27</title>
+</head>
+
+<body>
+	<form name='INFO' action='http://fe.it-academy.by/TestForm.php' novalidate>
+		<span>Разработчики: </span> <input type=text name='RAZRAB' id="RAZRAB"><span id="rAZRAB"></span><br />
+		<span>Название сайта: </span> <input type=text name='SITENAME' id="SITENAME"><span id="sITENAME"></span><br />
+		<span>URL сайта: </span> <input type=text name='URL' id="URL"><span id="uRL"></span><br />
+		<span>Дата запуска сайта: </span> <input type="date" name='TIME' id="TIME"><span id="tIME"></span><br />
+		<span>Поситителей в сутки: </span> <input type=number name='AMOUNT' id="AMOUNT"><span id="aMOUNT"></span><br />
+		<span>E-mail для связи: </span> <input type=text name='EMAIL' id="EMAIL"><span id="eMAIL"></span><br />
+		<span>Рубрика каталога: </span>
+		<select name='CHAPTER' id="CHAPTER">
+			<option value=1>здоровье</option>
+			<option value=2>домашний уют</option>
+			<option value=3 selected>бытовая техника</option>
+		</select><span id="cHAPTER"></span><br />
+		<span>Размещение:</span>
+		<input type=radio name='PLACE' value=1 id="PLACE1">бесплатное;
+		<input type=radio name='PLACE' value=2 id="PLACE2">платное;
+		<input type=radio name='PLACE' value=3 id="PLACE3">VIP;
+		<span id="pLACE"></span><br />
+		<span>Разрешить отзывы: </span> <input type=checkbox name='AGREE' id="AGREE"><span id="aGREE"></span><br />
+		<span>Описание сайта: </span><span id="dISCRIPT"></span><br />
+		<textarea name='DISCRIPT' id="DISCRIPT"> </textarea> <br />
+		<input type='submit' value='Опубликовать'>
+	</form>
+
+	<script>
+		const formTag = document.forms.INFO;
+
+		const Razrab = document.getElementById('RAZRAB');
+		Razrab.addEventListener('blur', validateRazrab, false);
+		function validateRazrab(eo) {
+			eo = eo || window.event;
+			const RazrabValue = Razrab.value.trim();
+			let elem = document.getElementById('rAZRAB');
+			elem.innerHTML = '';
+			if (RazrabValue == '') {
+				elem.innerHTML = ' Это поле не может быть пустым!'
+				elem.style.color = 'red';
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false  // возврвщает false если форма не валидна
+			}
+			return true; // возврвщает true если форма валидна
+		}
+
+		const Sitename = document.getElementById('SITENAME');
+		Sitename.addEventListener('blur', validateSitename, false);
+		function validateSitename(eo) {
+			eo = eo || window.event;
+			const SitenameValue = Sitename.value.trim();
+			let elem = document.getElementById('sITENAME');
+			elem.innerHTML = '';
+			if (SitenameValue == '') {
+				elem.innerHTML = ' Это поле не может быть пустым!'
+				elem.style.color = 'red';
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false  // возврвщает false если форма не валидна
+			}
+			return true; // возврвщает true если форма валидна		
+		}
+
+		const Url = document.getElementById('URL');
+		Url.addEventListener('blur', validateUrl, false);
+		function validateUrl(eo) {
+			eo = eo || window.event;
+			const UrlValue = Url.value.trim();
+			let elem = document.getElementById('uRL');
+			elem.innerHTML = '';
+			if (UrlValue == '') {
+				elem.innerHTML = ' Это поле не может быть пустым!'
+				elem.style.color = 'red';
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false  // возврвщает false если форма не валидна
+			}
+			return true; // возврвщает true если форма валидна		
+		}
+
+		const Time = document.getElementById('TIME');
+		Time.addEventListener('blur', validateTime, false);
+		function validateTime(eo) {
+			eo = eo || window.event;
+			const TimeValue = Time.value;
+			let elem = document.getElementById('tIME');
+			let now = new Date;
+			elem.innerHTML = '';
+			elem.style.color = 'red';
+			if (TimeValue == '') {
+				elem.innerHTML = ' Это поле не может быть пустым!'
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+			if (TimeValue < "1991-01-01") {
+				elem.innerHTML = ' Это было давно, наврятли Вы там что-то создали! Первый сайт создали в 1991г!'
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+			if (TimeValue > formatDateTime(now)) {
+				elem.innerHTML = ' Это будущее, наврятли Вы там что-то создали!'
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+			function formatDateTime(dt) {
+				const year = dt.getFullYear();
+				const month = dt.getMonth() + 1;
+				const day = dt.getDate();
+				return year + '-' + str0l(month, 2) + '-' + str0l(day, 2);
+			}
+			function str0l(val, len) {
+				let strVal = val.toString();
+				while (strVal.length < len)
+					strVal = '0' + strVal;
+				return strVal;
+			}
+			return true;
+		}
+
+		const Amount = document.getElementById('AMOUNT');
+		Amount.addEventListener('blur', validateAmount, false);
+		function validateAmount(eo) {
+			eo = eo || window.event;
+			const AmountValue = Amount.value;
+			let elem = document.getElementById('aMOUNT');
+			elem.innerHTML = '';
+			elem.style.color = 'red';
+			if (AmountValue == '') {
+				elem.innerHTML = ' Это поле не может быть пустым!'
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+			if (parseInt(AmountValue) < 0) {
+				elem.innerHTML = ' Значение не может быть отрицательным!'
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+			return true;
+		}
+
+		const Email = document.getElementById('EMAIL');
+		Email.addEventListener('blur', validateEmail, false);
+		function validateEmail(eo) {
+			eo = eo || window.event;
+			const EmailValue = Email.value;
+			let elem = document.getElementById('eMAIL');
+			elem.innerHTML = '';
+			elem.style.color = 'red';
+			if (EmailValue == '') {
+				elem.innerHTML = ' Это поле не может быть пустым!'
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+			return true;
+		}
+
+		const Chapter = document.getElementById('CHAPTER');
+		Chapter.addEventListener('click', validateChapter, false);
+		function validateChapter(eo) {
+			eo = eo || window.event;
+			const ChapterValue = Chapter.value;
+			let elem = document.getElementById('cHAPTER');
+			elem.innerHTML = '';
+			elem.style.color = 'red';
+			if (ChapterValue == 3) {
+				elem.innerHTML = ' Это нам не подходит, выберите другой вариант!';
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+			if (ChapterValue == 1 || ChapterValue == 2) {
+				elem.innerHTML = '';
+				return true;
+			}
+		}
+
+		const Place1 = document.getElementById('PLACE1');
+		const Place2 = document.getElementById('PLACE2');
+		const Place3 = document.getElementById('PLACE3');
+		Place1.addEventListener('input', validatePlace, false);
+		Place2.addEventListener('focus', retPlace, false);
+		Place3.addEventListener('focus', retPlace, false);
+		function validatePlace(eo) {
+			eo = eo || window.event;
+			let elem = document.getElementById('pLACE');
+			elem.innerHTML = ' Бесплатное только в мышеловке!) Выберите другой вариант!';
+			elem.style.color = 'red';
+			eo.preventDefault(); // форма не будет отправлена на сервер
+			return false;
+		}
+		function retPlace(eo) {
+			eo = eo || window.event;
+			let elem = document.getElementById('pLACE');
+			elem.innerHTML = '';
+			return true;
+		}
+		function noPlace(eo) {
+			eo = eo || window.event;
+			const PlaceField = formTag.elements.PLACE;
+			const PlaceValue = PlaceField.value;
+			let elemP = document.getElementById('pLACE');
+			if (PlaceValue == "") {
+				elemP.innerHTML = ' Вы не выбрали тип размещения!';
+				elemP.style.color = 'red';
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false
+			}
+		}
+
+		const Agree = document.getElementById('AGREE');
+		Agree.addEventListener('input', validateAgree, false);
+		function validateAgree(eo) {
+			eo = eo || window.event;
+			let elem = document.getElementById('aGREE');
+			elem.innerHTML = '';
+			if (Agree.checked) {
+				return true;
+			}
+			else {
+				elem.innerHTML = ' Вы не согласились с правилами сайта!'
+				elem.style.color = 'red';
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+		}
+
+		const Dis = document.getElementById('DISCRIPT');
+		Dis.addEventListener('blur', validateDis, false);
+		function validateDis(eo) {
+			eo = eo || window.event;
+			const DisValue = Dis.value.trim(); // строковое значение
+			let elem = document.getElementById('dISCRIPT');
+			elem.innerHTML = '';
+			elem.style.color = 'red';
+			if (DisValue == '') {
+				elem.innerHTML = ' Это поле не может быть пустым!'
+				eo.preventDefault(); // форма не будет отправлена на сервер
+				return false;
+			}
+			return true;
+		}
+
+		formTag.addEventListener('submit', validateInfoForm, false);
+
+		function validateInfoForm(eo) {
+			eo = eo || window.event;
+			try {
+				let error = [];
+				let i = 0;
+				if (!validateRazrab(eo)) {
+					error[i] = 'Razrab.focus()';
+					i++;
+				}
+				if (!validateSitename(eo)) {
+					error[i] = 'Sitename.focus()';
+					i++;
+				}
+				if (!validateUrl(eo)) {
+					error[i] = 'Url.focus()';
+					i++;
+				}
+				if (!validateTime(eo)) {
+					error[i] = 'Time.focus()';
+					i++;
+				}
+				if (!validateAmount(eo)) {
+					error[i] = 'Amount.focus()';
+					i++;
+				}
+				if (!validateEmail(eo)) {
+					error[i] = 'Email.focus()';
+					i++;
+				}
+				if (!validateChapter(eo)) {
+					error[i] = 'Chapter.focus()';
+					i++;
+				}
+				if (!noPlace(eo) || validatePlace(eo)) {
+					error[i] = 'document.getElementById("PLACE1").scrollIntoView()';
+					i++;
+				}
+				if (!validateAgree(eo)) {
+					error[i] = 'Agree.focus()';
+					i++;
+				}
+				if (!validateDis(eo)) {
+					error[i] = 'Dis.focus()';
+					i++;
+				}
+				eval(error[0]);
+			}
+			catch (ex) {
+				alert('Извините, что-то пошло не так, неожиданный сбой! Пересмотрите заполнение формы, возможно, это всё из-за вас!');
+				eo.preventDefault(); // что-то пошло не так - считаем что валидация не прошла
+			}
+		}
+	</script>
+</body>
+
+</html>
