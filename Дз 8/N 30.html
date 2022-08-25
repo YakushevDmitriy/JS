@@ -16,15 +16,13 @@
 		"use strict"
 		window.addEventListener('load', findImg, false);
 		function findImg(eo) {
-			let clickNow = null; // элемент который сейчас нажат.
+			let clickNow = null;
 			eo = eo || window.event;
 			let imgs = document.getElementsByTagName('img');
 			for (let i = imgs.length - 1; i >= 0; i--) {
 				let elem = imgs[i];
 				elem.style.top = elem.offsetTop + 'px';
 				elem.style.left = elem.offsetLeft + 'px';
-				elem.setAttribute('data-top', elem.style.top);
-				elem.setAttribute('data-left', elem.style.left);
 				elem.onmousedown = mousedownImg;
 			}
 
@@ -36,10 +34,11 @@
 			function mousedownImg(eo) {
 				eo = eo || window.event;
 				eo.preventDefault();
-				eo.target.style.zIndex = 100;
-				var placeDownX = eo.pageX - eo.target.offsetLeft;
-				var placeDownY = eo.pageY - eo.target.offsetTop;
+				let placeDownX = eo.pageX - eo.target.offsetLeft;
+				let placeDownY = eo.pageY - eo.target.offsetTop;
 				clickNow = eo.target;
+				let body = document.body;
+				body.appendChild(eo.target);
 				window.onmousemove = mousemoveImg;
 				window.onmouseup = mouseupImg;
 
@@ -54,9 +53,6 @@
 			function mouseupImg(eo) {
 				eo = eo || window.event;
 				eo.preventDefault();
-				clickNow.style.top = clickNow.getAttribute('data-top')
-				clickNow.style.left = clickNow.getAttribute('data-left')
-				clickNow.style.zIndex = 0;
 				clickNow.style.cursor = 'auto';
 				window.onmousemove = null;
 				window.onmouseout = null;
