@@ -20,7 +20,7 @@
 					let attribute = '';
 					for (let atrN in atr) {
 						atr[atrN] = findMnem(atr[atrN]);
-						attribute += (" " + atrN + "=" + atr[atrN]);
+						attribute += (" " + atrN + "='" + atr[atrN] + "'");
 					}
 					tagOpen = ("<" + tagName + attribute + " >")
 				}
