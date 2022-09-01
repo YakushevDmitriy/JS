@@ -1,0 +1,66 @@
+	#Main{
+		position: absolute;
+		display: none;
+	}
+	#Dial{
+		border-radius: 50%; 
+		width:200px; 
+		height:200px; 
+		background-color: rgb(255, 170, 0) ; position: absolute;
+	}
+	#Hours{
+		width:10px;
+		height:50px;
+		background-color: black;
+		position: absolute;
+		top:52.5px; /* height.Dial/2-95%(height.Hours) */
+		left:95px;	/* width.Dial/2-width.Hours/2 */
+		transform-origin: center 95%;
+		transform: rotate(0deg);
+		border-radius: 5px;  
+		z-index: 10;
+	}
+	#Min{
+		width:6px;
+		height:70px;
+		background-color: black;
+		position: absolute;
+		top:33.5px; /* height.Dial/2-95%(height.Min) */
+		left:97px;	/* width.Dial/2-width.Min/2 */
+		transform-origin: center 95%;
+		transform: rotate(0deg);
+		border-radius: 3px; 
+		z-index: 20; 
+	}
+	#Sec{
+		width: 3px;
+		height:90px;
+		background-color: black;
+		position: absolute;
+		top:14.5px; /* height.Dial/2-95%(height.Hours)*/
+		left:99px;	/* width.Dial/2-width.Hours/2   */
+		transform-origin: center 95%;
+		transform: rotate(0deg);
+		border-radius: 2px;  
+		z-index: 30;
+	}
+#numberClock {
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		background-color: #48b382;
+		position: absolute;
+		text-align: center;
+		line-height: 30px;
+		font-size: 20px;
+		transform-origin: center center;
+	}
+#elWatch {
+			width: 100px;
+			height: 30px;
+			position: absolute;
+			text-align: center;
+			line-height: 30px;
+			font-size: 20px;
+			color: black;
+		}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="CSS.css">
+</head>
+
+<body>
+	<form name="Start">
+		<p>Введите значение диаметра циферблата в пикселях от 200 до 800:</p>
+		<input type="number" name="diametr"> </input>
+		<input type="button" name="send" value="Построить часы" id="button">
+	</form>
+	<div id="Main">
+		<!-- общий контейнер -->
+		<div id="Dial"></div> <!-- контейнер циферблата -->
+		<div id="Hours"></div> <!-- контейнер часовой стрелки -->
+		<div id="Min"></div> <!-- контейнер минутной стрелки -->
+		<div id="Sec"></div> <!-- контейнер секундной стрелки -->
+		<div id="elWatch"> </div> <!-- контейнер  стрелки -->
+	</div>
+
+	<script>
+		"use strict"
+
+		let btn = document.getElementById('button');
+		let Dial = document.getElementById('Dial');
+		let Hours = document.getElementById('Hours');
+		let Min = document.getElementById('Min');
+		let Sec = document.getElementById('Sec');
+		let elWatch = document.getElementById('elWatch');
+		let angleValue = 0; // начальный угол стрелок
+		let angleNumber = 30; // расстояние(в градусах) между цифрами на часах
+		let form = document.forms.Start
+
+		btn.addEventListener('click', function (EO) {
+			EO = EO || window.event;
+			var keyBox = document.Start.diametr;
+			var diametr = keyBox.value;
+			let coef = (parseInt(diametr) / 200)//coef это коэффициент отношения заданного циферблата к минимальному диаметру цифирблата , этот коэффициент будет использоваться для масштабирования элементов часов.
+			if (((diametr <= 800) && (diametr >= 200)) == false) { //проверка введенного диаметра часов
+				alert("Недопустимый диаметр циферблата!");
+				eo.preventDefault();
+			}
+			else {
+				form.style.display = "none";	//скрываем поле ввода
+				document.getElementById('Main').style.display = "block";	//показываем изначально построенные часы для минимального диаметра равного 200px
+				Dial.style.width = diametr + 'px'; //задаем размер циферблата
+				Dial.style.height = diametr + 'px'; //задаем размер циферблата
+				let DialCenterX = Dial.offsetLeft + Dial.offsetWidth / 2; // узнаем центр общего контейнера по X
+				let DialCenterY = Dial.offsetTop + Dial.offsetHeight / 2; // узнаем центр общего контейнера по Y
+				let HoursWidth = 10 * coef;// размер часовой стрелки (10px- ширина при минимальном размере циферблата)
+				let HoursHeight = 50 * coef;//размер часовой стрелки (50px- высота при минимальном размере циферблата)
+				let MinWidth = 6 * coef;// размер минутной стрелки (6px- ширина при минимальном размере циферблата)
+				let MinHeight = 70 * coef;//размер минутной стрелки (70px- высота при минимальном размере циферблата)
+				let SecWidth = 3 * coef;// размер минутной стрелки (3px- ширина при минимальном размере циферблата)
+				let SecHeight = 90 * coef;//размер минутной стрелки (90px- высота при минимальном размере циферблата)
+				Hours.style.width = HoursWidth + 'px';
+				Hours.style.height = HoursHeight + 'px';
+				Hours.style.top = (DialCenterX - HoursHeight * 0.95) + 'px'; // центрируем часовую стрелку (0.95=95% - смещение точки центрирования через transform-origin)
+				Hours.style.left = (DialCenterY - HoursWidth * 0.5) + 'px'; //размер часовой стрелки (0.5=50% - смещение точки центрирования через transform-origin)
+				Hours.style.borderRadius = 5 * coef + 'px'; // 3px- закругление при минимальном размере циферблата
+
+				Min.style.width = MinWidth + 'px';
+				Min.style.height = MinHeight + 'px';
+				Min.style.top = (DialCenterX - MinHeight * 0.95) + 'px'; // центрируем часовую стрелку (0.95=95% - смещение точки центрирования через transform-origin)
+				Min.style.left = (DialCenterY - MinWidth * 0.5) + 'px'; //размер часовой стрелки (0.5=50% - смещение точки центрирования через transform-origin)
+				Min.style.borderRadius = 3 * coef + 'px'; // 3px- закругление при минимальном размере циферблата
+
+				Sec.style.width = SecWidth + 'px';
+				Sec.style.height = SecHeight + 'px';
+				Sec.style.top = (DialCenterX - SecHeight * 0.95) + 'px'; // центрируем часовую стрелку (0.95=95% - смещение точки центрирования через transform-origin)
+				Sec.style.left = (DialCenterY - SecWidth * 0.5) + 'px'; //размер часовой стрелки (0.5=50% - смещение точки центрирования через transform-origin)
+				Sec.style.borderRadius = 2 * coef + 'px'; // 2px- закругление при минимальном размере циферблата
+
+				elWatch.style.width = 150 * coef + 'px';
+				elWatch.style.left = (DialCenterX - elWatch.offsetWidth / 2) + 'px';
+				elWatch.style.top = (DialCenterY - elWatch.offsetHeight / 2 - 30 * coef) + 'px';
+				elWatch.style.fontSize = 20 * coef + 'px';
+
+				for (let i = 1; i <= 12; i++) {
+					let numberClock = document.createElement("div");// создаем контейнер для номеров часов)
+					angleValue += angleNumber;
+					let angle = angleValue / 180 * Math.PI;
+					numberClock = document.getElementById('Main').appendChild(numberClock);//созданный DIV(для номеров часов) делаем дочерным элементом основного контейнера
+					numberClock.id = ('numberClock');//устанавливаем готовый CSS класс для дочерных элементов
+					numberClock.innerHTML = i;//значением каждого дочерного элемента будет равен i
+					let numberClockW = 30 * coef; // ширина круга под цифрой
+					let numberClockH = 30 * coef; // высота круга под цифрой
+					numberClock.style.width = numberClockW + 'px';
+					numberClock.style.height = numberClockH + 'px';
+					let numberClockPozX = DialCenterX + (diametr / 2 - numberClock.offsetWidth / 2 - 5 * coef) * Math.sin(angle) - numberClock.offsetWidth / 2; // узнаем координаты дочерного элемента по X, где 5*coef отступ от края цифирблата
+					let numberClockPozY = DialCenterY - (diametr / 2 - numberClock.offsetHeight / 2 - 5 * coef) * Math.cos(angle) - numberClock.offsetHeight / 2; // узнаем координаты дочерного элемента по Y,где 5*coef отступ от края цифирблата
+					numberClock.style.left = numberClockPozX + "px";
+					numberClock.style.top = numberClockPozY + "px";
+					numberClock.style.lineHeight = 30 * coef + 'px';
+					numberClock.style.fontSize = 20 * coef + 'px';
+				}
+
+				// далее 360-количество градусов в круге, 12-количество часов в круге, 60 - количество минут или секунд в круге
+				var time = new Date(); //текущее время
+				let hoursDeg = 360 / 12 * (time.getHours() + (1 / 60) * time.getMinutes()); //определяем по времени где должна быть стрелка часов
+				let minDeg = 360 / 60 * (time.getMinutes() + (1 / 60) * time.getSeconds()); //определяем по времени где должна быть стрелка минут
+				let secDeg = 360 / 60 * time.getSeconds() - 6; //определяем по времени где должна быть стрелка секунд
+
+				// функция для определения положение электронных часов и стрелок для часов, минут, секунд
+				function arrows() {
+					var time = new Date(); //текущее время
+					console.log(time)
+					// электронные часы
+					elWatch.innerHTML = time.toLocaleTimeString();
+					// секундные стрелки
+					secDeg += 6; //каждую секунду секундная стрелка будет двигаться на 6 градусов
+					Sec.style.transform = "rotate(" + secDeg + "deg)";
+					// минутныеные стрелки
+					minDeg += 6 * (1 / 60); //каждую секунду минутная стрелка будет двигаться на 6*(1/60) градусов
+					Min.style.transform = "rotate(" + minDeg + "deg)";
+					// часовые стрелки
+					hoursDeg += 6 * (1 / 360); //каждую секунду часовая будет двигаться на 6*(1/360) градусов
+					Hours.style.transform = "rotate(" + hoursDeg + "deg)";
+				}
+				window.onload = arrows();
+				window.setInterval(arrows, 1000);// устанавливаем setInterval на 1 секунду и выполняем код каждую секунду чтоб стрелки часов, минут и секунд обновляли положени каждую секунду
+			}
+		})
+	</script>
+</body>
+
+</html>
