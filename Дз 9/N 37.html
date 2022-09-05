@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+</head>
+
+<body>
+	<form name="Start">
+		<p>Введите значение диаметра циферблата в пикселях от 200 до 800:</p>
+		<input type="number" name="diametr"> </input>
+		<input type="button" name="send" value="Построить часы" id="button">
+	</form>
+	<svg id="Main">
+		<!-- общий контейнер -->
+	</svg>
+
+	<script>
+		"use strict"
+		let btn = document.getElementById('button');
+		let angleValue = 0; // начальный угол стрелок
+		let angleNumber = 30; // расстояние(в градусах) между цифрами на часах
+		let form = document.forms.Start
+		let xmlnsOfSvg = 'http://www.w3.org/2000/svg';//для объявления пространства имен
+
+		btn.addEventListener('click', function (EO) {
+			EO = EO || window.event;
+			var keyBox = document.Start.diametr;
+			var diametr = keyBox.value;
+			let coef = (parseInt(diametr) / 200)//coef это коэффициент отношения заданного циферблата к минимальному диаметру цифирблата , этот коэффициент будет использоваться для масштабирования элементов часов.
+			if (((diametr <= 800) && (diametr >= 200)) == false) { //проверка введенного диаметра часов
+				alert("Недопустимый диаметр циферблата!");
+				eo.preventDefault();
+			}
+			else {
+				form.style.display = "none";	//скрываем поле ввода
+				let Main = document.getElementById('Main');
+				Main.style.display = "block";	//показываем изначально построенные часы для минимального диаметра равного 200px
+				Main.style.width = diametr + 'px';
+				Main.style.height = diametr + 'px'
+				Main.style.xmlns = xmlnsOfSvg;
+
+
+				let Dial = document.createElementNS(xmlnsOfSvg, "circle");
+				Dial.setAttribute("cx", diametr / 2); //задаем размер циферблата
+				Dial.setAttribute("cy", diametr / 2); //задаем размер циферблата
+				Dial.setAttribute("r", diametr / 2);
+				Dial.setAttribute("fill", "#FCCA66");
+				Main.appendChild(Dial); //созданный большой круг для часов делаем дочерным элементом svg
+				let MainCenterX = Main.getBoundingClientRect().left + Main.getBoundingClientRect().width / 2; //узнаем центр svg по X
+				let MainCenterY = Main.getBoundingClientRect().top + Main.getBoundingClientRect().height / 2; //узнаем центр svg по Y
+
+				let HoursWidth = 10 * coef;// размер часовой стрелки (10px- ширина при минимальном размере циферблата)
+				let HoursHeight = 50 * coef;//размер часовой стрелки (50px- высота при минимальном размере циферблата)
+				let Hours = document.createElementNS(xmlnsOfSvg, "line");
+				Hours.setAttribute("x1", MainCenterX - Main.getBoundingClientRect().left);
+				Hours.setAttribute("y1", MainCenterY - HoursHeight - Main.getBoundingClientRect().top);
+				Hours.setAttribute("x2", MainCenterX - Main.getBoundingClientRect().left);
+				Hours.setAttribute("y2", MainCenterY);
+				Hours.setAttribute("y2", MainCenterY);
+				Hours.setAttribute("stroke", "black");
+				Hours.setAttribute("stroke-width", HoursWidth);
+				Hours.setAttribute("stroke-linecap", "round");
+
+
+				let MinWidth = 6 * coef;// размер минутной стрелки (6px- ширина при минимальном размере циферблата)
+				let MinHeight = 70 * coef;//размер минутной стрелки (70px- высота при минимальном размере циферблата)
+				let Min = document.createElementNS(xmlnsOfSvg, "line");
+				Min.setAttribute("x1", MainCenterX - Main.getBoundingClientRect().left);
+				Min.setAttribute("y1", MainCenterY - MinHeight - Main.getBoundingClientRect().top);
+				Min.setAttribute("x2", MainCenterX - Main.getBoundingClientRect().left);
+				Min.setAttribute("y2", MainCenterY);
+				Min.setAttribute("stroke", "black");
+				Min.setAttribute("stroke-width", MinWidth);
+				Min.setAttribute("stroke-linecap", "round");
+
+
+				let SecWidth = 3 * coef;// размер минутной стрелки (3px- ширина при минимальном размере циферблата)
+				let SecHeight = 90 * coef;//размер минутной стрелки (90px- высота при минимальном размере циферблата)
+				let Sec = document.createElementNS(xmlnsOfSvg, "line");
+				Sec.setAttribute("x1", MainCenterX - Main.getBoundingClientRect().left);
+				Sec.setAttribute("y1", MainCenterY - SecHeight - Main.getBoundingClientRect().top);
+				Sec.setAttribute("x2", MainCenterX - Main.getBoundingClientRect().left);
+				Sec.setAttribute("y2", MainCenterY);
+				Sec.setAttribute("stroke", "black");
+				Sec.setAttribute("stroke-width", SecWidth);
+				Sec.setAttribute("stroke-linecap", "round");
+
+
+				Hours.style.transformOrigin = "center center";
+				Min.style.transformOrigin = "center center";
+				Sec.style.transformOrigin = "center center";
+
+				let elWatch = document.createElementNS(xmlnsOfSvg, "rect");
+				elWatch.setAttribute("x", (MainCenterX - elWatch.getBoundingClientRect().width / 2) - Main.getBoundingClientRect().left);
+				elWatch.setAttribute("y", (MainCenterY - Main.getBoundingClientRect().top - 30 * coef));
+				elWatch.setAttribute("fill", "none");
+				Main.appendChild(elWatch);
+				let elWatchT = document.createElementNS(xmlnsOfSvg, "text");
+				elWatchT.setAttribute("x", (MainCenterX - elWatch.getBoundingClientRect().width / 2) - Main.getBoundingClientRect().left);
+				elWatchT.setAttribute("y", (MainCenterY - Main.getBoundingClientRect().top - 30 * coef));
+				elWatchT.setAttribute("text-anchor", "middle");
+				elWatchT.setAttribute("dominant-baseline", "central");
+				elWatchT.style.fontSize = 20 * coef + 'px';
+				elWatchT = Main.appendChild(elWatchT);
+
+
+				for (let i = 1; i <= 12; i++) {
+					let numberClock = document.createElementNS(xmlnsOfSvg, "circle");// создаем контейнер для номеров часов)
+					let numberClockT = document.createElementNS(xmlnsOfSvg, "text")
+					angleValue += angleNumber;
+					let angle = angleValue / 180 * Math.PI;
+					let numberClockCX = MainCenterX + (diametr / 2 - 15 * coef - 5 * coef) * Math.sin(angle) - Main.getBoundingClientRect().left;
+					let numberClockCY = MainCenterY - (diametr / 2 - 15 * coef - 5 * coef) * Math.cos(angle) - Main.getBoundingClientRect().top;
+					numberClock.setAttribute("cx", numberClockCX);
+					numberClock.setAttribute("cy", numberClockCY);
+					numberClock.setAttribute("r", 15 * coef);
+					numberClock.setAttribute("fill", "#48B382");
+					numberClock = Main.appendChild(numberClock);
+
+					// работа над тексток(т.е цифры)
+					numberClockT.innerHTML = i;
+					numberClockT.setAttribute("x", numberClockCX);
+					numberClockT.setAttribute("y", numberClockCY);
+					numberClockT.setAttribute("text-anchor", "middle");
+					numberClockT.setAttribute("dominant-baseline", "central");
+					numberClockT.style.fontSize = 20 * coef + 'px';
+					numberClockT = Main.appendChild(numberClockT);
+				}
+				Main.appendChild(Hours);
+				Main.appendChild(Min);
+				Main.appendChild(Sec);
+				// далее 360-количество градусов в круге, 12-количество часов в круге, 60 - количество минут или секунд в круге
+
+
+				// функция для определения положение электронных часов и стрелок для часов, минут, секунд
+				function arrows() {
+					var time = new Date(); //текущее время
+					console.log(time)
+					let hoursDeg = 360 / 12 * (time.getHours() + (1 / 60) * time.getMinutes()); //определяем по времени где должна быть стрелка часов
+					let minDeg = 360 / 60 * (time.getMinutes() + (1 / 60) * time.getSeconds()); //определяем по времени где должна быть стрелка минут
+					let secDeg = 360 / 60 * time.getSeconds() - 6; //определяем по времени где должна быть стрелка секунд
+					let ms = time.getMilliseconds();
+					// электронные часы
+					elWatchT.innerHTML = time.toLocaleTimeString();
+					// секундные стрелки
+					secDeg += 6; //каждую секунду секундная стрелка будет двигаться на 6 градусов
+					Sec.style.transform = "rotate(" + secDeg + "deg)";
+					// минутныеные стрелки
+					minDeg += 6 * (1 / 60); //каждую секунду минутная стрелка будет двигаться на 6*(1/60) градусов
+					Min.style.transform = "rotate(" + minDeg + "deg)";
+					// часовые стрелки
+					hoursDeg += 6 * (1 / 360); //каждую секунду часовая будет двигаться на 6*(1/360) градусов
+					Hours.style.transform = "rotate(" + hoursDeg + "deg)";
+					setTimeout(arrows, 1000 - ms)
+				}
+				arrows();
+
+			}
+		});
+	</script>
+</body>
+
+</html>
