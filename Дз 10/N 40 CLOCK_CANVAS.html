@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+</head>
+
+<body>
+	<form name="Start">
+		<p>Введите значение диаметра циферблата в пикселях от 200 до 800:</p>
+		<input type="number" name="diametr"> </input>
+		<input type="button" name="send" value="Построить часы" id="button">
+	</form>
+	<canvas id="Main">
+		<!-- общий контейнер -->
+	</canvas>
+
+	<script>
+		"use strict"
+		let btn = document.getElementById('button');
+		let angleValue = 0;// начальный угол стрелок
+		let angleNumber = 30;// расстояние(в градусах) между цифрами на часах
+		let form = document.forms.Start;
+
+		btn.addEventListener('click', function (EO) {
+			EO = EO || window.event;
+			var keyBox = document.Start.diametr;
+			var diametr = keyBox.value;
+			let coef = (parseInt(diametr) / 200)//coef это коэффициент отношения заданного циферблата к минимальному диаметру цифирблата , этот коэффициент будет использоваться для масштабирования элементов часов.
+			if (((diametr <= 800) && (diametr >= 200)) == false) { //проверка введенного диаметра часов
+				alert("Недопустимый диаметр циферблата!");
+				eo.preventDefault();
+			}
+			else {
+				form.style.display = "none"; 	//скрываем поле ввода
+				let Main = document.getElementById('Main');
+				let context = Main.getContext('2d');
+				Main.style.display = "block";//показываем изначально построенные часы для минимального диаметра равного 200px
+				Main.width = parseInt(diametr);
+				Main.height = parseInt(diametr);
+				let MainCenterX = Main.getBoundingClientRect().width / 2; //узнаем центр по X
+				let MainCenterY = Main.getBoundingClientRect().height / 2; //узнаем центр по Y
+				let fontSize = 20 * coef + 'px';
+				function arrows() {
+					var time = new Date(); //текущее время
+					console.log(time)
+					let ms = time.getMilliseconds();
+					Dial(time); // весь канвас(часы аналоговые)
+					elWatch(time); // электронные часы
+					Hours(time); // для стрелки часов
+					Min(time); // для стрелки минут
+					Sec(time); // для стрелки секунд
+					setTimeout(arrows, 1000 - ms)
+				}
+
+				function Dial() {
+					context.fillStyle = "#FCCA66";
+					context.beginPath();
+					context.arc(MainCenterX, MainCenterY, diametr / 2, 0, Math.PI * 2, false);
+					context.fill();
+					for (let i = 1; i <= 12; i++) {
+						angleValue += angleNumber;
+						let angle = angleValue / 180 * Math.PI;
+						let numberClockCX = MainCenterX + (diametr / 2 - 15 * coef - 5 * coef) * Math.sin(angle);
+						let numberClockCY = MainCenterY - (diametr / 2 - 15 * coef - 5 * coef) * Math.cos(angle);
+
+						context.beginPath();
+						context.fillStyle = "#48B382";
+						context.arc(numberClockCX, numberClockCY, 15 * coef, 0, Math.PI * 2, false);
+						context.fill();
+						context.fillStyle = 'black';
+						context.font = `normal normal ${fontSize} 'Times New Roman'`;
+						context.textAlign = 'center';
+						context.textBaseline = 'middle';
+						context.fillText(i, numberClockCX, numberClockCY);
+					}
+				}
+
+				function Hours(time) {
+					let hoursDeg = 30 * (time.getHours() + (1 / 60) * time.getMinutes());
+					context.strokeStyle = "black";
+					context.lineWidth = 6 * coef;
+					context.lineCap = "round";
+					context.beginPath();
+					context.moveTo(MainCenterX, MainCenterY);
+					context.lineTo(MainCenterX + 50 * coef * Math.sin(hoursDeg / 180 * Math.PI), MainCenterY - 50 * coef * Math.cos(hoursDeg / 180 * Math.PI));
+					context.stroke();
+				}
+
+				function Min(time) {
+					let minutesDeg = 6 * (time.getMinutes() + (1 / 60) * time.getSeconds());
+					context.strokeStyle = "black";
+					context.lineWidth = 4 * coef;
+					context.lineCap = "round";
+					context.beginPath();
+					context.moveTo(MainCenterX, MainCenterY);
+					context.lineTo(MainCenterX + 70 * coef * Math.sin(minutesDeg / 180 * Math.PI), MainCenterY - 70 * coef * Math.cos(minutesDeg / 180 * Math.PI));
+					context.stroke();
+				}
+
+				function Sec(time) {
+					let secondsDeg = 6 * time.getSeconds();
+					context.strokeStyle = "black";
+					context.lineWidth = 2 * coef;
+					context.lineCap = "round";
+					context.beginPath();
+					context.moveTo(MainCenterX, MainCenterY);
+					context.lineTo(MainCenterX + 90 * coef * Math.sin(secondsDeg / 180 * Math.PI), MainCenterY - 90 * coef * Math.cos(secondsDeg / 180 * Math.PI));
+					context.stroke();
+				}
+
+				function elWatch(time) {
+					context.globalCompositeOperation = "source-over";
+					context.fillStyle = "#FCCA66";
+					context.beginPath();
+					context.fillRect(MainCenterX - 50 * coef / 2, MainCenterY - 30 * coef, 70 * coef, 25 * coef);
+					context.fill();
+					context.fillStyle = "black";
+					let elWatch = time.toLocaleTimeString();
+					context.textAlign = 'center';
+					context.textBaseline = 'middle';
+					context.font = `normal normal ${fontSize} 'Times New Roman'`;
+					context.fillText(elWatch, MainCenterX, MainCenterY - 30 * coef);
+					context.fill();
+				}
+				arrows();
+			}
+		});
+	</script>
+</body>
+
+</html>
