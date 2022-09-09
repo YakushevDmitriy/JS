@@ -1,0 +1,50 @@
+<script>
+	"use strict"
+	function checkPolindrom(str) {
+		let string = str.toLowerCase(); // приводим к нижнему регистру 
+		string = string.split("ё").join("е"); //заменяем Ё на Е тем самым игнорируя разницу между ними
+		string = string.split("ъ").join(""); // удаляем ъ 
+		string = string.split("ь").join("");// удаляем ь
+		let strN = '';
+		var rez;
+		for (let i = 0; i < string.length; i++) {
+			const char = string.charAt(i);
+			if (char >= 'а' && char <= 'я') {
+				strN += char;
+			}
+		}
+		if (strN === '') {
+			return true;
+		}
+		else {
+			rez = recPolindrom(strN, 0, rez);
+			return rez;
+		}
+	}
+
+
+	let str = prompt('Введите выражение на русском языке чтобы проверить является ли оно полиндромом');
+
+	if (checkPolindrom(str) == true)
+		alert('Введенное выражение - это палиндром');
+	else
+		alert('Введенное выражение - это не палиндром');
+
+	function recPolindrom(Str, n, rez) {
+
+		if (n < (Math.floor((Str.length) / 2))) {
+			let char1 = Str.charAt(n);
+			let char2 = Str.charAt(Str.length - 1 - n);
+
+			if (char1 == char2) {
+				n++;
+				rez = true;
+				recPolindrom(Str, n, rez);
+			}
+			else
+				rez = false;
+		}
+		return rez;
+	}
+
+</script>
