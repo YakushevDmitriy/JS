@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>N43</title>
+</head>
+
+<body>
+	<input type='button' value='Старт!' onclick='start()'>
+	<div id="score" style='display:inline-block; font-size: 40px; font-weight: bold;
+	text-align: center; padding-left: 200px; '>
+		<span id='scoreL'>0</span> : <span id='scoreR'>0</span>
+	</div>
+	<div style='width: 600px; height: 400px; border: solid black 1px; background-color: #f0ee7e; position: relative'>
+		<div id='IBall'
+			style='width: 40px; height: 40px; position: absolute; border-radius: 50%; background-color: #f02137;'>
+		</div>
+		<div id='racketL' style='width: 10px; height: 100px; position: absolute;background-color:green;'>
+		</div>
+		<div id='racketR' style='width: 10px; height: 100px; position: absolute;background-color:blue;'>
+		</div>
+
+		<script>
+			"use strict";
+			let ballH = {
+				posX: 300,// позиция середины поля
+				posY: 200,
+				speedX: 0,
+				speedY: 0,
+				width: 40,
+				height: 40,
+
+				update: function () {
+					const ballElem = document.getElementById('IBall');
+					ballElem.style.left = this.posX - this.width / 2 + "px";
+					ballElem.style.top = this.posY - this.height / 2 + "px";
+				}
+			}
+			let racketL = {
+				posX: 5,
+				posY: 200, // половина поля
+				speed: 0,
+				width: 10,
+				height: 100,
+				score: 0,
+
+				update: function () {
+					const racketL = document.getElementById('racketL');
+					racketL.style.left = this.posX - this.width / 2 + "px";
+					racketL.style.top = this.posY - this.height / 2 + "px";
+				},
+				updateScore: function () {
+					var counter = document.getElementById('scoreL');
+					counter.innerHTML = this.score;
+				}
+			}
+			let racketR = {
+				posX: 595,
+				posY: 200, // половина поля
+				speed: 0,
+				width: 10,
+				height: 100,
+				score: 0,
+
+				update: function () {
+					const racketR = document.getElementById('racketR');
+					racketR.style.left = this.posX - this.width / 2 + "px";
+					racketR.style.top = this.posY - this.height / 2 + "px";
+				},
+				updateScore: function () {
+					var counter = document.getElementById('scoreR');
+					counter.innerHTML = this.score;
+				}
+			}
+
+			let areaH = {
+				width: 600,
+				height: 400
+			}
+
+			function start() {
+				ballH.posX = 300;
+				ballH.posY = 200;
+				if (ballH.speedX === 0) {
+					ballH.speedX = 2;
+					ballH.speedY = 1;
+				}
+				window.addEventListener("keydown", keydown, false);
+				ballH.update();
+			}
+
+			function tick() {
+				ballH.posX += ballH.speedX;
+				// вылетел ли мяч правее стены? +очко левому
+				if (ballH.posX + ballH.width / 2 > areaH.width) {
+					ballH.speedX = 0;
+					ballH.speedY = 0;
+					window.removeEventListener("keydown", keydown, false);
+					ballH.posX = areaH.width - ballH.width / 2;
+					racketL.score++;
+					racketL.updateScore();
+				}
+				// вылетел ли мяч левее стены? +очко правому
+				if (ballH.posX < ballH.width / 2) {
+					ballH.speedX = 0;
+					ballH.speedY = 0;
+					window.removeEventListener("keydown", keydown, false);
+					ballH.posX = ballH.width / 2;
+					racketR.score++;
+					racketR.updateScore();
+				}
+				ballH.posY += ballH.speedY;
+				// вылетел ли мяч ниже пола?
+				if (ballH.posY + ballH.height / 2 > areaH.height) {
+					ballH.speedY = -ballH.speedY;
+					ballH.posY = areaH.height - ballH.height / 2;
+				}
+				// вылетел ли мяч выше потолка?
+				if (ballH.posY < ballH.height / 2) {
+					ballH.speedY = -ballH.speedY;
+					ballH.posY = ballH.height / 2;
+				}
+				// вылетел ли L ракетка ниже потолка?
+				racketL.posY += racketL.speed;
+				if (racketL.posY + racketL.height / 2 > areaH.height) {
+					racketL.speed = 0;
+					racketL.posY = areaH.height - racketL.height / 2;
+				}
+				// вылетел ли L ракетка выше потолка?
+				if (racketL.posY - racketL.height / 2 < 0) {
+					racketL.speed = racketL.speed;
+					racketL.posY = racketL.height / 2;
+				}
+				// вылетел ли R ракетка ниже потолка?
+				racketR.posY += racketR.speed;
+				if (racketR.posY + racketR.height / 2 > areaH.height) {
+					racketR.speed = 0;
+					racketR.posY = areaH.height - racketR.height / 2;
+				}
+				// вылетел ли R ракетка выше потолка?
+				if (racketR.posY - racketR.height / 2 < 0) {
+					racketR.speed = racketR.speed;
+					racketR.posY = racketR.height / 2;
+				}
+				// ударился ли мяч о правую ракетку?
+				if (ballH.posX + ballH.width / 2 >= racketR.posX - racketR.width / 2 && ballH.posX + ballH.width / 2 <= racketR.posX + racketR.width / 2) {
+					if (ballH.posY <= racketR.posY + racketR.height / 2 && ballH.posY >= racketR.posY - racketR.height / 2) {
+						ballH.posX = racketR.posX - racketR.width / 2 - ballH.width / 2;
+						ballH.speedX = -ballH.speedX;
+					}
+				}
+				// ударился ли мяч о левую ракетку?
+				if (ballH.posX - ballH.width / 2 <= racketL.posX + racketL.width / 2 && ballH.posX - ballH.width / 2 >= racketL.posX - racketL.width / 2) {
+					if (ballH.posY <= racketL.posY + racketL.height / 2 && ballH.posY >= racketL.posY - racketL.height / 2) {
+						ballH.posX = racketL.posX + racketL.width / 2 + ballH.width / 2;
+						ballH.speedX = -ballH.speedX;
+					}
+				}
+				ballH.update();
+				racketL.update();
+				racketR.update();
+				requestAnimationFrame(tick);
+			}
+
+			ballH.update();
+			racketL.update();
+			racketR.update();
+			requestAnimationFrame(tick);
+
+			window.addEventListener("keydown", keydown, false);
+			function keydown(EO) {
+				EO = EO || window.event;
+				EO.preventDefault();
+				if (EO.code === "ControlLeft") {
+					racketL.speed = 4;
+				}
+				if (EO.code === "ShiftLeft") {
+					racketL.speed = -4;
+				}
+				if (EO.code === "ArrowDown") {
+					racketR.speed = 4;
+				}
+				if (EO.code === "ArrowUp") {
+					racketR.speed = -4;
+				}
+			};
+
+			window.addEventListener("keyup", function (EO) {
+				EO = EO || window.event;
+				EO.preventDefault();
+				if (EO.code === "ControlLeft") {
+					racketL.speed = 0;
+				}
+				if (EO.code === "ShiftLeft") {
+					racketL.speed = 0;
+				}
+				if (EO.code === "ArrowDown") {
+					racketR.speed = 0;
+				}
+				if (EO.code === "ArrowUp") {
+					racketR.speed = 0;
+				}
+			});
+		</script>
+</body>
+
+</html>
