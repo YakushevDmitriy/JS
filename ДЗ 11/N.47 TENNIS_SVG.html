@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>N43</title>
+</head>
+
+<body>
+
+	<script>
+		"use strict";
+		var svg = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+		svg.setAttribute('width', 620);
+		svg.setAttribute('height', 470);
+		document.body.appendChild(svg);
+
+		var buttonFill = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+		buttonFill.setAttribute('x', 10);
+		buttonFill.setAttribute('y', 10);
+		buttonFill.setAttribute('width', 80);
+		buttonFill.setAttribute('height', 30);
+		buttonFill.setAttribute('fill', 'grey');
+		svg.appendChild(buttonFill);
+
+		var buttonText = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+		buttonText.setAttribute('x', 50);
+		buttonText.setAttribute('y', 30);
+		buttonText.setAttribute('text-anchor', 'middle');
+		buttonText.textContent = 'Старт!';
+		svg.appendChild(buttonText);
+
+		var button = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+		button.setAttribute('x', 10);
+		button.setAttribute('y', 10);
+		button.setAttribute('width', 80);
+		button.setAttribute('height', 30);
+		button.setAttribute('opacity', '0');
+		svg.appendChild(button);
+
+		var score = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+		score.setAttribute('x', 310);
+		score.setAttribute('y', 30);
+		score.setAttribute('text-anchor', 'middle');
+		score.setAttribute('font-size', 25);
+		svg.appendChild(score);
+
+		var area = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+		area.setAttribute('x', 10);
+		area.setAttribute('y', 60);
+		area.setAttribute('width', 600);
+		area.setAttribute('height', 400);
+		area.setAttribute('fill', '#f0ee7e');
+		area.setAttribute('stroke', 'black');
+		svg.appendChild(area);
+
+		var ball = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+		ball.setAttribute('cx', 10);
+		ball.setAttribute('cy', 60);
+		ball.setAttribute('r', 20);
+		ball.setAttribute('fill', '#f02137');
+		svg.appendChild(ball);
+
+		var racketL = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+		racketL.setAttribute('x', 10);
+		racketL.setAttribute('y', 60);
+		racketL.setAttribute('width', 10);
+		racketL.setAttribute('height', 100);
+		racketL.setAttribute('fill', 'green');
+		svg.appendChild(racketL);
+
+		var racketR = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+		racketR.setAttribute('x', 600);
+		racketR.setAttribute('y', 60);
+		racketR.setAttribute('width', 10);
+		racketR.setAttribute('height', 100);
+		racketR.setAttribute('fill', 'blue');
+		svg.appendChild(racketR);
+
+		let scoreL = 0, scoreR = 0;
+		score.textContent = `${scoreL} : ${scoreR}`;
+		var areaPos = area.getBoundingClientRect();
+		var ballPos = ball.getBoundingClientRect();
+		var racketLPos = racketL.getBoundingClientRect();
+		var racketRPos = racketR.getBoundingClientRect();
+		let racketLspeed = 0;
+		let racketRspeed = 0;
+		let racketLHspeed = 0;
+		let racketRHspeed = 0;
+		let ballH = {
+			speedX: 0,
+			speedY: 0,
+		}
+		let ballHposX = 10 + areaPos.width / 2;
+		let ballHposY = 60 + areaPos.height / 2;
+		function ballHUpdate() {
+			ball.setAttribute('cx', ballHposX);
+			ball.setAttribute('cy', ballHposY);
+		}
+		let racketLHposX = 10;
+		let racketLHposY = 60 + areaPos.height / 2 - racketLPos.height / 2;
+		function racketLHUpdate() {
+			racketL.setAttribute('x', racketLHposX);
+			racketL.setAttribute('y', racketLHposY);
+		}
+		let racketRHposX = 10 + areaPos.width - racketRPos.width;
+		let racketRHposY = 60 + areaPos.height / 2 - racketRPos.height / 2;
+		function racketRHUpdate() {
+			racketR.setAttribute('x', racketRHposX);
+			racketR.setAttribute('y', racketRHposY);
+		}
+
+		function tick() {
+
+			ballHposX += ballH.speedX;
+			// вылетел ли мяч правее стены? +очко левому
+			if (ballHposX + ballPos.width / 2 > 10 + areaPos.width) {
+				ballH.speedX = 0;
+				ballH.speedY = 0;
+				window.removeEventListener("keydown", keydown, false);
+				ballHposX = 10 + areaPos.width - ballPos.width / 2;
+				scoreL++;
+				score.textContent = `${scoreL} : ${scoreR}`;
+			}
+			// вылетел ли мяч левее стены? +очко правому
+			if (ballHposX - ballPos.width / 2 < 10) {
+				ballH.speedX = 0;
+				ballH.speedY = 0;
+				window.removeEventListener("keydown", keydown, false);
+				ballHposX = 10 + ballPos.width / 2;
+				scoreR++;
+				score.textContent = `${scoreL} : ${scoreR}`;
+			}
+			ballHposY += ballH.speedY;
+			// вылетел ли мяч ниже пола?
+			if (ballHposY + ballPos.height / 2 > 60 + areaPos.height) {
+				ballH.speedY = -ballH.speedY;
+				ballHposY = 60 + areaPos.height - ballPos.height / 2;
+			}
+			// вылетел ли мяч выше потолка?
+			if (ballHposY - ballPos.height / 2 < 60) {
+				ballH.speedY = -ballH.speedY;
+				ballHposY = 60 + ballPos.height / 2;
+			}
+			// вылетел ли L ракетка ниже потолка?
+			racketLHposY += racketLspeed;
+			if (racketLHposY + 100 > 60 + areaPos.height) {
+				racketLHspeed = 0;
+				racketLHposY = 60 + areaPos.height - 100;
+			}
+			// вылетел ли L ракетка выше потолка?
+			if (racketLHposY < 60) {
+				racketLHspeed = 0;
+				racketLHposY = 60;
+			}
+			// вылетел ли R ракетка ниже потолка?
+			racketRHposY += racketRspeed;
+			if (racketRHposY + 100 > 60 + areaPos.height) {
+				racketRspeed = 0;
+				racketRHposY = 60 + areaPos.height - 100;
+			}
+			// вылетел ли R ракетка выше потолка?
+			if (racketRHposY - 100 / 2 < 10) {
+				racketRspeed = 0;
+				racketRHposY = 10 + 100 / 2;
+			}
+			// ударился ли мяч о правую ракетку?
+			if (ballHposX + ballPos.width / 2 >= racketRHposX && ballHposX + ballPos.width / 2 <= racketRHposX + 10) {
+				if (ballHposY <= racketRHposY + 100 && ballHposY >= racketRHposY) {
+					ballH.posX = racketRHposX - ballPos.width / 2;
+					ballH.speedX = -ballH.speedX;
+				}
+			}
+			// ударился ли мяч о левую ракетку?
+			if (ballHposX - ballPos.width / 2 <= racketLHposX + 10 && ballHposX - ballPos.width / 2 >= racketLHposX) {
+				if (ballHposY <= racketLHposY + 100 && ballHposY >= racketLHposY) {
+					ballHposX = racketLHposX + 10 + ballPos.width / 2;
+					ballH.speedX = -ballH.speedX;
+				}
+			}
+			ballHUpdate();
+			racketLHUpdate();
+			racketRHUpdate();
+			requestAnimationFrame(tick);
+		}
+		ballHUpdate();
+		racketLHUpdate();
+		racketRHUpdate();
+		requestAnimationFrame(tick);
+		button.addEventListener('click', start);
+
+		function start() {
+			ballHposX = 10 + areaPos.width / 2;
+			ballHposY = 60 + areaPos.height / 2;
+			if (ballH.speedX === 0) {
+				ballH.speedX = 2;
+				ballH.speedY = 1;
+			}
+			window.addEventListener("keydown", keydown, false);
+			ballHUpdate();
+
+		}
+		window.addEventListener("keydown", keydown, false);
+		function keydown(EO) {
+			EO = EO || window.event;
+			EO.preventDefault();
+			if (EO.code === "ControlLeft") {
+				racketLspeed = 4;
+			}
+			if (EO.code === "ShiftLeft") {
+				racketLspeed = -4;
+			}
+			if (EO.code === "ArrowDown") {
+				racketRspeed = 4;
+			}
+			if (EO.code === "ArrowUp") {
+				racketRspeed = -4;
+			}
+		};
+
+		window.addEventListener("keyup", function (EO) {
+			EO = EO || window.event;
+			EO.preventDefault();
+			if (EO.code === "ControlLeft") {
+				racketLspeed = 0;
+			}
+			if (EO.code === "ShiftLeft") {
+				racketLspeed = 0;
+			}
+			if (EO.code === "ArrowDown") {
+				racketRspeed = 0;
+			}
+			if (EO.code === "ArrowUp") {
+				racketRspeed = 0;
+			}
+		});
+	</script>
+</body>
+
+</html>
