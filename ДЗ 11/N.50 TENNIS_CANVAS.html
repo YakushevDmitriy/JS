@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>N50</title>
+</head>
+
+<body>
+	<input type='button' value='Старт!' onclick='start()'><br>
+	<canvas id="Canvas">
+		<!-- общий контейнер -->
+	</canvas>
+	<script>
+
+		"use strict";
+		let Canvas = document.getElementById('Canvas');
+		Canvas.width = 620;
+		Canvas.height = 470;
+		let context = Canvas.getContext('2d');
+		let scoreL = 0,
+			scoreR = 0,
+			r = 20,
+			APosX = 10,
+			APosY = 60,
+			AWidth = 600,
+			AHeigth = 400,
+			racketW = 10,
+			racketH = 100,
+			ballposX = 0, //смещение мяча относительно начального расположения( центра поля)
+			ballposY = 0,//смещение мяча относительно начального расположения( центра поля)
+			racketLposY = 0,//смещение левой ракетки относительно начального расположения( центра поля)
+			racketRposY = 0;//смещение правой ракетки относительно начального расположения( центра поля)
+
+		function Score() {
+			context.beginPath();
+			context.font = `normal normal 25px 'Times New Roman'`;
+			context.textAlign = 'center';
+			context.textBaseline = 'middle';
+			context.fillText(`${scoreL} : ${scoreR}`, APosX + AWidth / 2, APosY / 2);
+		} Score()
+
+		function Area() {
+			context.beginPath();
+			context.fillStyle = "#f0ee7e";
+			context.strokeStyle = "black";
+			context.fillRect(APosX, APosY, AWidth, AHeigth);
+			context.strokeRect(APosX, APosY, AWidth, AHeigth);
+		} Area()
+
+		function Ball() {
+			context.beginPath();
+			context.fillStyle = "#f02137";
+			context.arc(APosX + AWidth / 2 + ballposX, APosY + AHeigth / 2 + ballposY, r, 0, Math.PI * 2, false);
+			context.fill();
+		} Ball()
+
+		function racketL() {
+			context.beginPath();
+			context.fillStyle = "green";
+			context.fillRect(APosX, APosY + AHeigth / 2 - racketH / 2 + racketLposY, racketW, racketH);
+		} racketL()
+
+		function racketR() {
+			context.beginPath();
+			context.fillStyle = "blue";
+			context.fillRect(APosX + AWidth - racketW, APosY + AHeigth / 2 - racketH / 2 + racketRposY, racketW, racketH);
+		} racketR()
+
+		function Goal() {
+			context.beginPath();
+			context.fillStyle = "white";
+			context.fillRect(0, 0, Canvas.width, APosY);
+		}
+		requestAnimationFrame(tick);
+		let racketLspeed = 0,
+			racketRspeed = 0,
+			ball = {
+				speedX: 0,
+				speedY: 0,
+			}
+		function getRandomArbitrary(min, max) {//Максимум не включается, минимум включается
+			return Math.random() * (max - min) + min;
+		}
+
+		function start() {
+			ball.speedX = 0;
+			ball.speedY = 0;
+			ball.speedX = getRandomArbitrary(1, 4);
+			ball.speedY = getRandomArbitrary(1, 3);
+			ballposX = 0;
+			ballposY = 0;
+			window.addEventListener("keydown", keydown, false);
+			Score()
+			Area()
+			Ball();
+			racketL();
+			racketR();
+		}
+
+		function tick() {
+			ballposX += ball.speedX;
+			ballposY += ball.speedY;
+			// вылетел ли мяч правее стены? +очко левому
+			if (APosX + AWidth / 2 + ballposX + r > APosX + AWidth) {
+				ball.speedX = 0;
+				ball.speedY = 0;
+				window.removeEventListener("keydown", keydown, false);
+				ballposX = AWidth / 2 - r;
+				scoreL++;
+				Goal()
+			}
+			// вылетел ли мяч левее стены? +очко правому
+			if (APosX + AWidth / 2 + ballposX - r < APosX) {
+				ball.speedX = 0;
+				ball.speedY = 0;
+				window.removeEventListener("keydown", keydown, false);
+				ballposX = -AWidth / 2 + r;
+				scoreR++;
+				Goal()
+			}
+			// вылетел ли мяч ниже пола?
+			if (APosY + AHeigth / 2 + ballposY + r > APosY + AHeigth) {
+				ball.speedY = -ball.speedY
+				ballposY = AHeigth / 2 - r;
+			}
+			// вылетел ли мяч выше потолка?
+			if (APosY + AHeigth / 2 + ballposY - r < APosY) {
+				ball.speedY = -ball.speedY;
+				ballposY = -AHeigth / 2 + r;
+			}
+			// вылетел ли L ракетка ниже пола?
+			racketLposY += racketLspeed;
+			if (APosY + AHeigth / 2 - racketH / 2 + racketLposY > APosY + AHeigth - racketH) {
+				racketLspeed = 0;
+				racketLposY = AHeigth / 2 - racketH / 2;
+			}
+			// вылетел ли L ракетка выше потолка?
+			if (APosY + AHeigth / 2 - racketH / 2 + racketLposY < APosY) {
+				racketLspeed = 0;
+				racketLposY = -AHeigth / 2 + racketH / 2;;
+			}
+			// вылетел ли R ракетка ниже пола?
+			racketRposY += racketRspeed;
+			if (APosY + AHeigth / 2 - racketH / 2 + racketRposY > APosY + AHeigth - racketH) {
+				racketRspeed = 0;
+				racketRposY = AHeigth / 2 - racketH / 2;
+			}
+			// вылетел ли R ракетка выше потолка?
+			if (APosY + AHeigth / 2 - racketH / 2 + racketRposY < APosY) {
+				racketRspeed = 0;
+				racketRposY = -AHeigth / 2 + racketH / 2;;
+			}
+
+			// ударился ли мяч о правую ракетку?
+			if (APosX + AWidth / 2 + ballposX + r >= APosX + AWidth - racketW && APosX + AWidth / 2 + ballposX + r <= APosX + AWidth) {
+				if (APosY + AHeigth / 2 + ballposY <= APosY + AHeigth / 2 + racketRposY + racketH / 2 && APosY + AHeigth / 2 + ballposY >= APosY + AHeigth / 2 + racketRposY - racketH / 2) {
+					ballposX = AWidth / 2 - racketW - r;
+					ball.speedX = -ball.speedX - getRandomArbitrary(0, 1);
+					ball.speedY = -ball.speedY + getRandomArbitrary(0, 1);
+				}
+			}
+			// ударился ли мяч о левую ракетку?
+			if (APosX + AWidth / 2 + ballposX - r >= APosX && APosX + AWidth / 2 + ballposX - r <= APosX + racketW) {
+				if (APosY + AHeigth / 2 + ballposY <= APosY + AHeigth / 2 + racketLposY + racketH / 2 && APosY + AHeigth / 2 + ballposY >= APosY + AHeigth / 2 + racketLposY - racketH / 2) {
+					ballposX = -AWidth / 2 + r + racketW;
+					ball.speedX = -ball.speedX + getRandomArbitrary(0, 1);
+					ball.speedY = -ball.speedY + getRandomArbitrary(0, 1);
+				}
+			}
+
+			Score()
+			Area()
+			Ball();
+			racketL();
+			racketR();
+			requestAnimationFrame(tick);
+		}
+
+
+		window.addEventListener("keydown", keydown, false);
+		function keydown(EO) {
+			EO = EO || window.event;
+			EO.preventDefault();
+			if (EO.code === "ControlLeft") {
+				racketLspeed = 4;
+			}
+			if (EO.code === "ShiftLeft") {
+				racketLspeed = -4;
+			}
+			if (EO.code === "ArrowDown") {
+				racketRspeed = 4;
+			}
+			if (EO.code === "ArrowUp") {
+				racketRspeed = -4;
+			}
+		};
+
+		window.addEventListener("keyup", function (EO) {
+			EO = EO || window.event;
+			EO.preventDefault();
+			if (EO.code === "ControlLeft") {
+				racketLspeed = 0;
+			}
+			if (EO.code === "ShiftLeft") {
+				racketLspeed = 0;
+			}
+			if (EO.code === "ArrowDown") {
+				racketRspeed = 0;
+			}
+			if (EO.code === "ArrowUp") {
+				racketRspeed = 0;
+			}
+		});
+	</script>
+</body>
+
+</html>
