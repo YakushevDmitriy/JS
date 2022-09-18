@@ -30,8 +30,11 @@
 			ballposX = 0, //смещение мяча относительно начального расположения( центра поля)
 			ballposY = 0,//смещение мяча относительно начального расположения( центра поля)
 			racketLposY = 0,//смещение левой ракетки относительно начального расположения( центра поля)
-			racketRposY = 0;//смещение правой ракетки относительно начального расположения( центра поля)
-
+			racketRposY = 0,//смещение правой ракетки относительно начального расположения( центра поля)
+			state = 0;
+		//0-начальное положение мяча (скорость 0)
+		//1-мяч летит, процесс игры
+		//2-гол, мяч стоит около стенки
 		function Score() {
 			context.beginPath();
 			context.font = `normal normal 25px 'Times New Roman'`;
@@ -84,91 +87,93 @@
 		}
 
 		function start() {
-			ball.speedX = 0;
-			ball.speedY = 0;
-			ball.speedX = getRandomArbitrary(1, 4);
-			ball.speedY = getRandomArbitrary(1, 3);
-			ballposX = 0;
-			ballposY = 0;
-			window.addEventListener("keydown", keydown, false);
-			Score()
-			Area()
-			Ball();
-			racketL();
-			racketR();
+			if (state == 0 || state == 2) {
+				state = 1;
+				ball.speedX = getRandomArbitrary(1, 4);
+				ball.speedY = getRandomArbitrary(1, 3);
+				ballposX = 0;
+				ballposY = 0;
+				window.addEventListener("keydown", keydown, false);
+				Score()
+				Area()
+				Ball();
+				racketL();
+				racketR();
+			}
 		}
 
 		function tick() {
-			ballposX += ball.speedX;
-			ballposY += ball.speedY;
-			// вылетел ли мяч правее стены? +очко левому
-			if (APosX + AWidth / 2 + ballposX + r > APosX + AWidth) {
-				ball.speedX = 0;
-				ball.speedY = 0;
-				window.removeEventListener("keydown", keydown, false);
-				ballposX = AWidth / 2 - r;
-				scoreL++;
-				Goal()
-			}
-			// вылетел ли мяч левее стены? +очко правому
-			if (APosX + AWidth / 2 + ballposX - r < APosX) {
-				ball.speedX = 0;
-				ball.speedY = 0;
-				window.removeEventListener("keydown", keydown, false);
-				ballposX = -AWidth / 2 + r;
-				scoreR++;
-				Goal()
-			}
-			// вылетел ли мяч ниже пола?
-			if (APosY + AHeigth / 2 + ballposY + r > APosY + AHeigth) {
-				ball.speedY = -ball.speedY
-				ballposY = AHeigth / 2 - r;
-			}
-			// вылетел ли мяч выше потолка?
-			if (APosY + AHeigth / 2 + ballposY - r < APosY) {
-				ball.speedY = -ball.speedY;
-				ballposY = -AHeigth / 2 + r;
-			}
-			// вылетел ли L ракетка ниже пола?
-			racketLposY += racketLspeed;
-			if (APosY + AHeigth / 2 - racketH / 2 + racketLposY > APosY + AHeigth - racketH) {
-				racketLspeed = 0;
-				racketLposY = AHeigth / 2 - racketH / 2;
-			}
-			// вылетел ли L ракетка выше потолка?
-			if (APosY + AHeigth / 2 - racketH / 2 + racketLposY < APosY) {
-				racketLspeed = 0;
-				racketLposY = -AHeigth / 2 + racketH / 2;;
-			}
-			// вылетел ли R ракетка ниже пола?
-			racketRposY += racketRspeed;
-			if (APosY + AHeigth / 2 - racketH / 2 + racketRposY > APosY + AHeigth - racketH) {
-				racketRspeed = 0;
-				racketRposY = AHeigth / 2 - racketH / 2;
-			}
-			// вылетел ли R ракетка выше потолка?
-			if (APosY + AHeigth / 2 - racketH / 2 + racketRposY < APosY) {
-				racketRspeed = 0;
-				racketRposY = -AHeigth / 2 + racketH / 2;;
-			}
+			if (state == 1) {
+				ballposX += ball.speedX;
+				ballposY += ball.speedY;
+				// вылетел ли мяч правее стены? +очко левому
+				if (APosX + AWidth / 2 + ballposX + r > APosX + AWidth) {
+					ball.speedX = 0;
+					ball.speedY = 0;
+					ballposX = AWidth / 2 - r;
+					scoreL++;
+					state = 2;
+					Goal()
+				}
+				// вылетел ли мяч левее стены? +очко правому
+				if (APosX + AWidth / 2 + ballposX - r < APosX) {
+					ball.speedX = 0;
+					ball.speedY = 0;
+					ballposX = -AWidth / 2 + r;
+					scoreR++;
+					state = 2;
+					Goal()
+				}
+				// вылетел ли мяч ниже пола?
+				if (APosY + AHeigth / 2 + ballposY + r > APosY + AHeigth) {
+					ball.speedY = -ball.speedY
+					ballposY = AHeigth / 2 - r;
+				}
+				// вылетел ли мяч выше потолка?
+				if (APosY + AHeigth / 2 + ballposY - r < APosY) {
+					ball.speedY = -ball.speedY;
+					ballposY = -AHeigth / 2 + r;
+				}
+				// вылетел ли L ракетка ниже пола?
+				racketLposY += racketLspeed;
+				if (APosY + AHeigth / 2 - racketH / 2 + racketLposY > APosY + AHeigth - racketH) {
+					racketLspeed = 0;
+					racketLposY = AHeigth / 2 - racketH / 2;
+				}
+				// вылетел ли L ракетка выше потолка?
+				if (APosY + AHeigth / 2 - racketH / 2 + racketLposY < APosY) {
+					racketLspeed = 0;
+					racketLposY = -AHeigth / 2 + racketH / 2;;
+				}
+				// вылетел ли R ракетка ниже пола?
+				racketRposY += racketRspeed;
+				if (APosY + AHeigth / 2 - racketH / 2 + racketRposY > APosY + AHeigth - racketH) {
+					racketRspeed = 0;
+					racketRposY = AHeigth / 2 - racketH / 2;
+				}
+				// вылетел ли R ракетка выше потолка?
+				if (APosY + AHeigth / 2 - racketH / 2 + racketRposY < APosY) {
+					racketRspeed = 0;
+					racketRposY = -AHeigth / 2 + racketH / 2;;
+				}
 
-			// ударился ли мяч о правую ракетку?
-			if (APosX + AWidth / 2 + ballposX + r >= APosX + AWidth - racketW && APosX + AWidth / 2 + ballposX + r <= APosX + AWidth) {
-				if (APosY + AHeigth / 2 + ballposY <= APosY + AHeigth / 2 + racketRposY + racketH / 2 && APosY + AHeigth / 2 + ballposY >= APosY + AHeigth / 2 + racketRposY - racketH / 2) {
-					ballposX = AWidth / 2 - racketW - r;
-					ball.speedX = -ball.speedX - getRandomArbitrary(0, 1);
-					ball.speedY = -ball.speedY + getRandomArbitrary(0, 1);
+				// ударился ли мяч о правую ракетку?
+				if (APosX + AWidth / 2 + ballposX + r >= APosX + AWidth - racketW && APosX + AWidth / 2 + ballposX + r <= APosX + AWidth) {
+					if (APosY + AHeigth / 2 + ballposY <= APosY + AHeigth / 2 + racketRposY + racketH / 2 && APosY + AHeigth / 2 + ballposY >= APosY + AHeigth / 2 + racketRposY - racketH / 2) {
+						ballposX = AWidth / 2 - racketW - r;
+						ball.speedX = -ball.speedX - getRandomArbitrary(0, 1);
+						ball.speedY = ball.speedY + getRandomArbitrary(0, 1);
+					}
+				}
+				// ударился ли мяч о левую ракетку?
+				if (APosX + AWidth / 2 + ballposX - r >= APosX && APosX + AWidth / 2 + ballposX - r <= APosX + racketW) {
+					if (APosY + AHeigth / 2 + ballposY <= APosY + AHeigth / 2 + racketLposY + racketH / 2 && APosY + AHeigth / 2 + ballposY >= APosY + AHeigth / 2 + racketLposY - racketH / 2) {
+						ballposX = -AWidth / 2 + r + racketW;
+						ball.speedX = -ball.speedX + getRandomArbitrary(0, 1);
+						ball.speedY = ball.speedY + getRandomArbitrary(0, 1);
+					}
 				}
 			}
-			// ударился ли мяч о левую ракетку?
-			if (APosX + AWidth / 2 + ballposX - r >= APosX && APosX + AWidth / 2 + ballposX - r <= APosX + racketW) {
-				if (APosY + AHeigth / 2 + ballposY <= APosY + AHeigth / 2 + racketLposY + racketH / 2 && APosY + AHeigth / 2 + ballposY >= APosY + AHeigth / 2 + racketLposY - racketH / 2) {
-					ballposX = -AWidth / 2 + r + racketW;
-					ball.speedX = -ball.speedX + getRandomArbitrary(0, 1);
-					ball.speedY = -ball.speedY + getRandomArbitrary(0, 1);
-				}
-			}
-
 			Score()
 			Area()
 			Ball();
@@ -183,16 +188,20 @@
 			EO = EO || window.event;
 			EO.preventDefault();
 			if (EO.code === "ControlLeft") {
-				racketLspeed = 4;
+				if (state == 1)
+					racketLspeed = 4;
 			}
 			if (EO.code === "ShiftLeft") {
-				racketLspeed = -4;
+				if (state == 1)
+					racketLspeed = -4;
 			}
 			if (EO.code === "ArrowDown") {
-				racketRspeed = 4;
+				if (state == 1)
+					racketRspeed = 4;
 			}
 			if (EO.code === "ArrowUp") {
-				racketRspeed = -4;
+				if (state == 1)
+					racketRspeed = -4;
 			}
 		};
 
