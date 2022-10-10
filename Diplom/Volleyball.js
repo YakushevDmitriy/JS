@@ -35,8 +35,8 @@ let
 	angle = 0,
 	amthit1 = 0,//количество подряд ударов 1го
 	amthit2 = 0,//количество подряд ударов 2го
-	score1 = 14,//очки 1го
-	score2 = 14,//очки 2го 
+	score1 = 10,//очки 1го
+	score2 = 10,//очки 2го 
 	R1 = 35 * ratio,
 	R2 = 40 * ratio,
 	win = 0,//победитель
@@ -110,10 +110,6 @@ function BallP() {
 		let angleR = angle / 180 * Math.PI;
 		let BallKX = (CanvasWidth / 2 + BallX) - BallR * Math.cos(angleR);
 		let BallKY = (CanvasHeight / 3 - BallY) + BallR * Math.sin(angleR);
-		context.beginPath();
-		context.fillStyle = Player2Color;
-		context.arc(BallKX, BallKY, 5, 0, Math.PI * 2, false);
-		context.fill();
 		BallPos[i] = { BallKX, BallKY };
 		angle += 10;
 	}
@@ -390,10 +386,10 @@ function tick() {
 		requestAnimationFrame(tick);
 	}
 }
-/*window.addEventListener('beforeunload', (event) => {
+window.addEventListener('beforeunload', (event) => {
 	event.preventDefault();
 	event.returnValue = 'Есть несохранённые изменения. Всё равно уходим?';
-});*/
+});
 
 window.addEventListener("keydown", keydown, false);
 window.addEventListener("keyup", keyup, false);
@@ -585,4 +581,3 @@ function updateReady(callresult) {
 function errorHandler(jqXHR, statusStr, errorStr) {
 	alert(statusStr + ' ' + errorStr);
 }
-
