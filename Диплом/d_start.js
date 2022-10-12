@@ -1,11 +1,12 @@
 "use strict";
-let button = document.getElementById('button'),
+var button = document.getElementById('button'),
 	P1Name = document.getElementById('P1Name'),
 	P2Name = document.getElementById('P2Name'),
 	P1Color = document.getElementById('P1Color'),
 	P2Color = document.getElementById('P2Color'),
 	Player1Name, Player2Name, Player1Color, Player2Color,
-	res = {};
+	res = {},
+	updatePassword;
 P1Name.addEventListener("change", locStor);
 P2Name.addEventListener("change", locStor);
 P1Color.addEventListener("change", locStor);
@@ -17,10 +18,6 @@ function locStor() {
 	localStorage.Player1Name = `${P1Name.value}`;
 	localStorage.Player2Name = `${P2Name.value}`;
 }
-
-const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
-let updatePassword;
-const stringName = 'YAKUSHEV_VOLLEYBALL_TABLEOFRECORDS';
 
 function check() {
 	if (Player1Name == '' || Player2Name == '') {
@@ -65,7 +62,7 @@ function lockGetReady(callresult) {
 function updateReady(callresult) {
 	if (callresult.error != undefined)
 		alert(callresult.error);
-	document.location.replace('Volleyball.html');
+	switchToVolleyballPage();
 }
 
 function restoreInfo() {

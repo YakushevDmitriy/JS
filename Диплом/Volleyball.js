@@ -1,5 +1,5 @@
 "use strict";
-let
+var
 	button_now = document.getElementById('button_now'),
 	Canvas = document.getElementById('Canvas'),
 	context = Canvas.getContext('2d'),
@@ -35,8 +35,8 @@ let
 	angle = 0,
 	amthit1 = 0,//количество подряд ударов 1го
 	amthit2 = 0,//количество подряд ударов 2го
-	score1 = 14,//очки 1го
-	score2 = 14,//очки 2го 
+	score1 = 10,//очки 1го
+	score2 = 10,//очки 2го 
 	R1 = 35 * ratio,
 	R2 = 40 * ratio,
 	win = 0,//победитель
@@ -49,14 +49,12 @@ let
 	Player1Name = localStorage.Player1Name,
 	Player2Name = localStorage.Player2Name,
 	Player1Color = localStorage.Player1Color,
-	Player2Color = localStorage.Player2Color;
+	Player2Color = localStorage.Player2Color,
+	updatePassword;;
 
-const hitAudio = new Audio("hit.mp3"),
+var hitAudio = new Audio("hit.mp3"),
 	goalAudio = new Audio("goal.mp3"),
 	winnerAudio = new Audio("winner.mp3");
-const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
-let updatePassword;
-const stringName = 'YAKUSHEV_VOLLEYBALL_TABLEOFRECORDS';
 
 button_now.addEventListener('click', start, false);
 button_now.addEventListener('touchstart', start, false);
@@ -110,10 +108,6 @@ function BallP() {
 		let angleR = angle / 180 * Math.PI;
 		let BallKX = (CanvasWidth / 2 + BallX) - BallR * Math.cos(angleR);
 		let BallKY = (CanvasHeight / 3 - BallY) + BallR * Math.sin(angleR);
-		context.beginPath();
-		context.fillStyle = Player2Color;
-		context.arc(BallKX, BallKY, 5, 0, Math.PI * 2, false);
-		context.fill();
 		BallPos[i] = { BallKX, BallKY };
 		angle += 10;
 	}
@@ -226,7 +220,7 @@ function Goal2() {
 function Winner() {
 	winnerSound();
 	vibro([100, 100, 100, 100, 100, 500, 50, 100, 20, 100]);
-	storeInfo()
+	storeInfo();
 	context.beginPath();
 	context.fillStyle = 'rgba(0,0,0,0.9)'
 	context.fillRect(CanvasWidth / 3, 0, CanvasWidth / 3, CanvasHeight);
@@ -379,7 +373,6 @@ function tick() {
 	if (Player2X < touch2X - 3 * CanvasWidth / 4 && Player2X > touch2X - 3 * CanvasWidth / 4 + Player2SpeedX)
 		Player2SpeedX = 0;
 
-
 	AreaCanvas();
 	GridCanvas();
 	BallCanvas();
@@ -390,10 +383,6 @@ function tick() {
 		requestAnimationFrame(tick);
 	}
 }
-/*window.addEventListener('beforeunload', (event) => {
-	event.preventDefault();
-	event.returnValue = 'Есть несохранённые изменения. Всё равно уходим?';
-});*/
 
 window.addEventListener("keydown", keydown, false);
 window.addEventListener("keyup", keyup, false);
@@ -402,7 +391,7 @@ window.addEventListener("touchmove", touchmove, { passive: false });
 window.addEventListener("touchend", touchend, { passive: false });
 window.addEventListener("swipe", jump, false);
 
-const mySwipe = new Event("swipe", { bubbles: true });
+var mySwipe = new Event("swipe", { bubbles: true });
 
 function jump(EO) {
 	EO.preventDefault();
@@ -586,3 +575,9 @@ function errorHandler(jqXHR, statusStr, errorStr) {
 	alert(statusStr + ' ' + errorStr);
 }
 
+window.addEventListener('beforeunload', beforeunload, false)
+function beforeunload(EO) {
+	cancelAnimationFrame(tick);
+	EO.preventDefault();
+	EO.returnValue = 'Есть несохранённые изменения. Всё равно уходим?';
+};

@@ -1,8 +1,7 @@
-let tbody = document.getElementById('tbody');
-const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
-const stringName = 'YAKUSHEV_VOLLEYBALL_TABLEOFRECORDS';
-let sortable = [],
-	lenTab = 0;
+var tbody, sortable, lenTab;
+tbody = document.getElementById('tbody');
+sortable = [];
+lenTab = 0;
 function restoreInfo() {
 	$.ajax(
 		{

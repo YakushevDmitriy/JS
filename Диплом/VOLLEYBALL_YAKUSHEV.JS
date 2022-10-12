@@ -1,102 +1,159 @@
-	"use strict";
+"use strict";
+const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
+const stringName = 'YAKUSHEV_VOLLEYBALL_TABLEOFRECORDS';
+window.onhashchange = switchToStateFromURLHash;
+// текущее состояние приложения
+// это Model из MVC
+var SPAState = {}; // могут быть элементы pagename страницы, которую нужнно отобразить
 
-	window.onhashchange = switchToStateFromURLHash;
+function switchToStateFromURLHash() {
+	var URLHash = window.location.hash;
+	// убираем из закладки УРЛа решётку
+	// (по-хорошему надо ещё убирать восклицательный знак, если есть)
+	// и декодируем из формата УРЛ, т.к. любые значения в УРЛ закодированы
+	var stateJSON = decodeURIComponent(URLHash.substr(1));
+	if (stateJSON != "")
+		SPAState = JSON.parse(stateJSON); // если JSON непустой, читаем из него состояние и отображаем
+	else
+		SPAState = { pagename: 'Menu' }; // иначе показываем главную страницу
 
-	// текущее состояние приложения
-	// это Model из MVC
-	var SPAState = {}; // могут быть элементы pagename и photoid
+	console.log('Новое состояние приложения:');
+	console.log(SPAState);
 
-	// фотографии, которые можно просмотреть
-	var photos = {
-		1: { image: "Hilu3.jpg", comment: "собака Шарик" },
-		2: { image: "Retriever3.jpg", comment: "собака Барбос" }
-	};
+	// обновляем вариабельную часть страницы под текущее состояние
+	// это реализация View из MVC - отображение состояния модели в HTML-код
+	var pageHTML = "";
+	var jssrc = "";
+	switch (SPAState.pagename) {
+		case 'Menu':
+			pageHTML += '<div id="Menu">';
+			pageHTML += '<p id="Name"> VOLLEYBALL</p>';
+			pageHTML += '<input type="button" onclick="switchToStartPage()" name="start" value="Начать игру" id="start">';
+			pageHTML += '<input type="button" onclick="switchToRulsPage()" name="ruls" value="Правила" id="ruls">';
+			pageHTML += '<input type="button" onclick="switchToRecordPage()" name="records" value="Рекорды" id="records">';
+			pageHTML += '</div>';
+			break;
 
-	// вызывается при изменении закладки УРЛа
-	// а также при первом открытии страницы
-	// читает новое состояние приложения из закладки УРЛа
-	// и обновляет ВСЮ вариабельную часть веб-страницы
-	// соответственно этому состоянию
-	// это упрощённая реализация РОУТИНГА - автоматического выполнения нужных
-	// частей кода в зависимости от формы URLа
-	// "роутинг" и есть "контроллер" из MVC - управление приложением через URL
-	function switchToStateFromURLHash() {
-		var URLHash = window.location.hash;
+		case 'd_start':
+			pageHTML += '<div id="d_start">';
+			pageHTML += '<form id="Start" name="Start">';
+			pageHTML += '	<p id="Name"> VOLLEYBALL</p>';
+			pageHTML += '<p>Введите имя первого игрока: </p>';
+			pageHTML += '<input type="text" id="P1Name" name="P1Name" value="Player1"> </input><br>';
+			pageHTML += '<p>Выберите цвет первого игрока: </p>';
+			pageHTML += '<input type="color" id="P1Color" name="P1Color" value="#ff0000"><br><br>';
+			pageHTML += '<p>Введите имя второго игрока: </p>';
+			pageHTML += '	<input type="text" id="P2Name" name="P2Name" value="Player2"> </input>';
+			pageHTML += '	<p>Выберите цвет первого игрока: </p>';
+			pageHTML += '	<input type="color" id="P2Color" name="P2Color" value="#0000FF"><br><br>';
+			pageHTML += '	<input type="button" name="button" value="ИГРАТЬ!" id="button">';
+			pageHTML += '</form>';
+			pageHTML += '</div>';
+			jssrc = "d_start.js";
+			break;
 
-		// убираем из закладки УРЛа решётку
-		// (по-хорошему надо ещё убирать восклицательный знак, если есть)
-		// и декодируем из формата УРЛ, т.к. любые значения в УРЛ закодированы
-		var stateJSON = decodeURIComponent(URLHash.substr(1));
+		case 'd_ruls':
+			pageHTML += '<div id="d_ruls">';
+			pageHTML += '<p id="Top"> Правила игры:</p>';
+			pageHTML += '<ul>';
+			pageHTML += '<li> Игра продолжается пока один из игроков не заработает 15 очков!</li>';
+			pageHTML += '<li> Гол фиксируется при падении мяча на землю.</li>';
+			pageHTML += '<li> Каждый игрок имеет право на 3 подряд касания, если после этого емк не удается перевести мяч сопернику, ему засчитывается гол. </li>';
+			pageHTML += '</ul>';
+			pageHTML += '<p id="Top"> Управление:</p>';
+			pageHTML += '<table id="control">';
+			pageHTML += '<tr>';
+			pageHTML += '<td>';
+			pageHTML += '<ul> На компьютере:';
+			pageHTML += '<ul>Левый игрок:';
+			pageHTML += '<li>Движение игрока влево:&quotA&quot </li>';
+			pageHTML += '<li>Движение игрока вправо:&quotD&quot </li>';
+			pageHTML += '<li>Движение игрока вверх(прыжок):&quotW&quot </li>';
+			pageHTML += '</ul>';
+			pageHTML += '<ul>Правый игрок:';
+			pageHTML += '<li>Движение игрока влево:&quotСтрелка влево&quot </li>';
+			pageHTML += '<li>Движение игрока вправо:&quotСтрелка вправо&quot </li>';
+			pageHTML += '<li>Движение игрока вверх(прыжок):&quotСтрелка вверх&quot </li>';
+			pageHTML += '</ul>';
+			pageHTML += '</ul>';
+			pageHTML += '</td>';
+			pageHTML += '<td>';
+			pageHTML += '<ul> На мобильном устройстве для управления конкретным игроком нужно касаться экрана на его половине поля:';
+			pageHTML += '<ul>';
+			pageHTML += '<li>Движение игрока влево:&Движение пальцем влево&quot </li>';
+			pageHTML += '<li>Движение игрока вправо:&Движение пальцем вправо&quot </li>';
+			pageHTML += '<li>Движение игрока вверх(прыжок):&quotСвайп вверх&quot </li>';
+			pageHTML += '</ul>';
+			pageHTML += '</ul>';
+			pageHTML += '</td>';
+			pageHTML += '</tr>';
+			pageHTML += '</table>';
+			pageHTML += '<p id="Top"> Рекорды:</p>';
+			pageHTML += '<ul>';
+			pageHTML += '<li> После окончания игры победитель получает очки, равные разцице очков встречи</li>';
+			pageHTML += '</ul>';
+			pageHTML += '</div>';
+			break;
 
-		if (stateJSON != "")
-			SPAState = JSON.parse(stateJSON); // если JSON непустой, читаем из него состояние и отображаем
-		else
-			SPAState = { pagename: 'Main' }; // иначе показываем главную страницу
+		case 'd_records':
+			pageHTML += '<div id="d_records">';
+			pageHTML += '<p id="Name"> VOLLEYBALL</p>';
+			pageHTML += '<p id="Top"> Топ 10 игроков</p>';
+			pageHTML += '</div>';
+			pageHTML += '<table id="recordstable">';
+			pageHTML += '<thead>';
+			pageHTML += '<th id="Number">Позиция</th>';
+			pageHTML += '<th id="Player">Игрок</th>';
+			pageHTML += '<th id="Score">Очки</th>';
+			pageHTML += '</thead>';
+			pageHTML += '<tbody id="tbody">';
+			pageHTML += '</tbody>';
+			pageHTML += '</table>';
+			jssrc = "d_records.js";
+			break;
 
-		console.log('Новое состояние приложения:');
-		console.log(SPAState);
-
-		// обновляем вариабельную часть страницы под текущее состояние
-		// это реализация View из MVC - отображение состояния модели в HTML-код
-		var pageHTML = "";
-		switch (SPAState.pagename) {
-			case 'Main':
-				pageHTML += "<h3>Главная страница</h3>";
-				pageHTML += "<p>Щёлкайте по кнопкам!</p>";
-				break;
-			case 'Photo':
-				var photo = photos[SPAState.photoid];
-				pageHTML += "<h3>Фото</h3>";
-				pageHTML += "<img src='" + photo.image + "'>";
-				pageHTML += "<p><i>" + photo.comment + "</i></p>";
-				break;
-			case 'About':
-				pageHTML += "<h3>О нас</h3>";
-				pageHTML += "<p>Мы круты!</p>";
-				break;
-		}
-		document.getElementById('IPage').innerHTML = pageHTML;
+		case 'Volleyball':
+			pageHTML += '	<canvas id="Canvas"></canvas>';
+			pageHTML += '	<input type="button" name="button_now" value="ИГРАТЬ ЕЩЕ!" id="button_now">';
+			jssrc = "Volleyball.js";
+			break;
 	}
+	console.log(pageHTML);
+	document.body.innerHTML = pageHTML;
+	var script = document.createElement('script');
+	script.setAttribute('src', jssrc);
+	document.body.appendChild(script);
 
-	// устанавливает в закладке УРЛа новое состояние приложения
-	// и затем устанавливает+отображает это состояние
-	function switchToState(newState) {
-		// устанавливаем закладку УРЛа (кодируя как положено любые компоненты УРЛ)
-		// нужно для правильной работы кнопок навигации браузера
-		// (т.к. записывается новый элемент истории просмотренных страниц)
-		// и для возможности передачи УРЛа другим лицам
-		location.hash = encodeURIComponent(JSON.stringify(newState));
+}
+// устанавливает в закладке УРЛа новое состояние приложения
+// и затем устанавливает+отображает это состояние
+function switchToState(newState) {
+	// устанавливаем закладку УРЛа (кодируя как положено любые компоненты УРЛ)
+	// нужно для правильной работы кнопок навигации браузера
+	// (т.к. записывается новый элемент истории просмотренных страниц)
+	// и для возможности передачи УРЛа другим лицам
+	location.hash = encodeURIComponent(JSON.stringify(newState));
 
-		// АВТОМАТИЧЕСКИ вызовется switchToStateFromURLHash()
-		// т.к. закладка УРЛа изменилась (ЕСЛИ она действительно изменилась)
-	}
+	// АВТОМАТИЧЕСКИ вызовется switchToStateFromURLHash()
+	// т.к. закладка УРЛа изменилась (ЕСЛИ она действительно изменилась)
+}
 
-	function switchToMainPage() {
-		switchToState({ pagename: 'Main' });
-	}
+function switchToMenuPage() {
+	switchToState({ pagename: 'Menu' });
+}
+function switchToStartPage() {
+	switchToState({ pagename: 'd_start' });
+}
+function switchToRulsPage() {
+	switchToState({ pagename: 'd_ruls' });
+}
 
-	function switchToPhotoPage(photoId) {
-		switchToState({ pagename: 'Photo', photoid: photoId });
-	}
+function switchToRecordPage() {
+	switchToState({ pagename: 'd_records' });
+}
+function switchToVolleyballPage() {
+	switchToState({ pagename: 'Volleyball' });
+}
+// переключаемся в состояние, которое сейчас прописано в закладке УРЛ
+switchToStateFromURLHash();
 
-	function switchToAboutPage() {
-		switchToState({ pagename: 'About' });
-	}
-
-	// переключаемся в состояние, которое сейчас прописано в закладке УРЛ
-	switchToStateFromURLHash();
-
-
-
-<br>
-<input type=button value='Главная' onclick='switchToMainPage()'>
-<span id='IPhotosButtons'></span>
-<script>
-	var photosStr = "";
-	for (var photoId in photos) {
-		var photo = photos[photoId];
-		photosStr += '<input type=button value="' + photo.comment + '" onclick="switchToPhotoPage(' + photoId + ')"> ';
-	}
-	document.getElementById('IPhotosButtons').innerHTML = photosStr;
-</script>
-<input type=button value='О нас' onclick='switchToAboutPage()'></input>
