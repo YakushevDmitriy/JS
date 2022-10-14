@@ -2,18 +2,37 @@
 const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
 const stringName = 'YAKUSHEV_VOLLEYBALL_TABLEOFRECORDS';
 window.onhashchange = switchToStateFromURLHash;
-// текущее состояние приложения
-// это Model из MVC
 var SPAState = {}; // могут быть элементы pagename страницы, которую нужнно отобразить
-
+var StateV = 0;//0-не в игре, 1 - в игре,2- промежуточный результат при отмене выхода из игры.
+var SPApagename;
 function switchToStateFromURLHash() {
+	if (StateV == 1) {
+		if (confirm("Вы точно желаете уйти? Все результаты игры будут утеряны. Нажмите ОК чтовы уйти, или Отмена если хотите остаться!") == false) {
+			location.hash = encodeURIComponent(JSON.stringify(({ pagename: 'Volleyball' })));
+			StateV = 2;
+			return false;
+		}
+		StateV = 0;
+	}
+	if (StateV == 2) {
+		StateV = 1;
+		requestAnimationFrame(tick);
+		return false;
+	}
+
 	var URLHash = window.location.hash;
 	// убираем из закладки УРЛа решётку
 	// (по-хорошему надо ещё убирать восклицательный знак, если есть)
 	// и декодируем из формата УРЛ, т.к. любые значения в УРЛ закодированы
 	var stateJSON = decodeURIComponent(URLHash.substr(1));
-	if (stateJSON != "")
+	if (stateJSON != "") {
+		SPApagename = JSON.parse(stateJSON).pagename;
+		if (SPApagename == 'Volleyball') {
+			StateV = 1;
+			SPAState = JSON.parse(stateJSON); // 
+		}
 		SPAState = JSON.parse(stateJSON); // если JSON непустой, читаем из него состояние и отображаем
+	}
 	else
 		SPAState = { pagename: 'Menu' }; // иначе показываем главную страницу
 
@@ -122,10 +141,8 @@ function switchToStateFromURLHash() {
 	var script = document.createElement('script');
 	script.setAttribute('src', jssrc);
 	document.body.appendChild(script);
-
 }
-// устанавливает в закладке УРЛа новое состояние приложения
-// и затем устанавливает+отображает это состояние
+
 function switchToState(newState) {
 	// устанавливаем закладку УРЛа (кодируя как положено любые компоненты УРЛ)
 	// нужно для правильной работы кнопок навигации браузера

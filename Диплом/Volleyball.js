@@ -242,6 +242,7 @@ function Winner() {
 	context.fillText(`${score1} : ${score2}`, CanvasWidth / 2, 0.35 * CanvasHeight);
 	context.fill();
 	button_now.style.display = "block";
+	window.cancelAnimationFrame(tick);
 }
 AreaCanvas();
 GridCanvas();
@@ -379,7 +380,7 @@ function tick() {
 	Player1();
 	Player2();
 	Score();
-	if (stateG != 0) {
+	if (stateG != 0 && StateV == 1) {
 		requestAnimationFrame(tick);
 	}
 }
