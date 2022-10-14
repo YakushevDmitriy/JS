@@ -118,7 +118,6 @@ function switchToStateFromURLHash() {
 			jssrc = "Volleyball.js";
 			break;
 	}
-	console.log(pageHTML);
 	document.body.innerHTML = pageHTML;
 	var script = document.createElement('script');
 	script.setAttribute('src', jssrc);
