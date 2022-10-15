@@ -13,6 +13,8 @@ body {
 }
 #Canvas {
 	position: absolute;
+	height: 100vh;
+	width: 100vw;
 }
 #Menu {
 	position: absolute;
@@ -35,7 +37,7 @@ body {
 }
 #Name,
 #Top {
-	margin: 5vh auto;
+	margin: 3vh auto;
 	font-size: 10vh;
 	text-align: center;
 	text-shadow: 1px 1px 10px rgb(0, 0, 0);

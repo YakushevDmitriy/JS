@@ -58,11 +58,11 @@ function switchToStateFromURLHash() {
 			pageHTML += '<form id="Start" name="Start">';
 			pageHTML += '	<p id="Name"> VOLLEYBALL</p>';
 			pageHTML += '<p>Введите имя первого игрока: </p>';
-			pageHTML += '<input type="text" id="P1Name" name="P1Name" value="Player1"> </input><br>';
+			pageHTML += '<input type="text" id="P1Name" name="P1Name" value=""> </input><br>';
 			pageHTML += '<p>Выберите цвет первого игрока: </p>';
 			pageHTML += '<input type="color" id="P1Color" name="P1Color" value="#ff0000"><br><br>';
 			pageHTML += '<p>Введите имя второго игрока: </p>';
-			pageHTML += '	<input type="text" id="P2Name" name="P2Name" value="Player2"> </input>';
+			pageHTML += '	<input type="text" id="P2Name" name="P2Name" value=""> </input>';
 			pageHTML += '	<p>Выберите цвет первого игрока: </p>';
 			pageHTML += '	<input type="color" id="P2Color" name="P2Color" value="#0000FF"><br><br>';
 			pageHTML += '	<input type="button" name="button" value="ИГРАТЬ!" id="button">';

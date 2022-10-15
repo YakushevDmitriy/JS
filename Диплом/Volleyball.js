@@ -5,8 +5,10 @@ var
 	context = Canvas.getContext('2d'),
 	CanvasWidth = window.innerWidth,
 	CanvasHeight = window.innerHeight,
-	ratio = CanvasHeight / 620, /*CanvasHeight=620-величина на разрабатываемом компьютере 
+	ratioH = CanvasHeight / 620, /*CanvasHeight=620-величина на разрабатываемом компьютере 
 т.к некоторые параметры игры завязаны на этом значении*/
+	ratioW = CanvasWidth / 1340,
+	ratio = ratioH / 2 + ratioW / 2,
 	stateG = 3, /*0-конец игры( один из игроков набрал 15 очков), 1-подает первый игрок, 2-подает 2й игрок.3-начало игры*/
 	state1 = 0, /*0-игрок 1 в начальном положении, 1-игрок 1 летит вверх, 2-летит вниз */
 	state2 = 0, /*0-игрок 2 в начальном положении, 1-игрок 2 летит вверх, 2-летит вниз*/
@@ -15,6 +17,8 @@ var
 	Ball = new Image(),
 	Pillar = new Image(),
 	Area = new Image(),
+	Player1Img = new Image(),
+	Player2Img = new Image(),
 	GridW = CanvasWidth / 100,// ширина столба сетки
 	GridH = CanvasHeight / 2,//высота столба сетки
 	Player1X = 0,//смещение 1го игрока от начального значения по Х
@@ -37,8 +41,8 @@ var
 	amthit2 = 0,//количество подряд ударов 2го
 	score1 = 10,//очки 1го
 	score2 = 10,//очки 2го 
-	R1 = 35 * ratio,
-	R2 = 40 * ratio,
+	R1 = 50 * ratio,
+	R2 = 50 * ratio,
 	win = 0,//победитель
 	touch1X,//координата касания по X
 	touch2X,//координата касания по X
@@ -55,7 +59,26 @@ var
 var hitAudio = new Audio("hit.mp3"),
 	goalAudio = new Audio("goal.mp3"),
 	winnerAudio = new Audio("winner.mp3");
-
+function resize() {
+	console.log(window.screen.orientation.type);
+	/*screen.orientation.lock('portrait-primary');*/
+	CanvasWidth = window.innerWidth;
+	CanvasHeight = window.innerHeight;
+	Canvas.width = CanvasWidth;
+	Canvas.height = CanvasHeight;
+	ratioH = CanvasHeight / 620;
+	ratioW = CanvasWidth / 1340;
+	ratio = ratioH / 2 + ratioW / 2;
+	BallR = 40 * ratio;
+	GridW = CanvasWidth / 100;
+	GridH = CanvasHeight / 2;
+	R1 = 50 * ratio;
+	R2 = 50 * ratio;
+	BallX = 0;
+	stateB = 3;
+	BallCanvas();
+	landscape()
+}
 button_now.addEventListener('click', start, false);
 button_now.addEventListener('touchstart', start, false);
 function start(EO) {
@@ -66,15 +89,24 @@ function start(EO) {
 	stateG = 3;
 	requestAnimationFrame(tick);
 }
+function landscape() {
+	if (window.screen.orientation.type == 'portrait-primary' || window.screen.orientation.type == 'portrait-secondary')
+		alert('Поверните девайс в горизонтальное положение!')
+}
 
 Canvas.width = CanvasWidth;
 Canvas.height = CanvasHeight;
 Ball.onload = BallCanvas;
 Pillar.onload = GridCanvas;
 Area.onload = AreaCanvas;
+Player1Img.onload = Player1;
+Player2Img.onload = Player2;
 Ball.src = 'img/ball1.png';
 Pillar.src = 'img/pillar.png';
 Area.src = 'img/beach.jpg ';
+Player1Img.src = 'img/kar.png ';
+Player2Img.src = 'img/nush.png ';
+
 startSound();
 function AreaCanvas() {
 	context.drawImage(Area, 0, 0, CanvasWidth, CanvasHeight)
@@ -85,9 +117,17 @@ function Score() {
 	context.textAlign = 'center';
 	context.textBaseline = 'middle';
 	context.fillStyle = 'black';
-	context.fillText(`${Player1Name}`, CanvasWidth / 4, CanvasHeight / 20);
-	context.fillText(`${score1} : ${score2}`, CanvasWidth / 2, CanvasHeight / 20);
-	context.fillText(`${Player2Name}`, 3 * CanvasWidth / 4, CanvasHeight / 20);
+	if (CanvasWidth < 800) {
+		context.fillText(`${Player1Name}`, CanvasWidth / 4, CanvasHeight / 15);
+		context.fillText(`${score1}`, CanvasWidth / 4, 2 * CanvasHeight / 15);
+		context.fillText(`${score2}`, 3 * CanvasWidth / 4, 2 * CanvasHeight / 15);
+		context.fillText(`${Player2Name}`, 3 * CanvasWidth / 4, CanvasHeight / 15);
+	}
+	else {
+		context.fillText(`${Player1Name}`, CanvasWidth / 4, CanvasHeight / 15);
+		context.fillText(`${score1} : ${score2}`, CanvasWidth / 2, CanvasHeight / 15);
+		context.fillText(`${Player2Name}`, 3 * CanvasWidth / 4, CanvasHeight / 15);
+	}
 }
 function BallCanvas() {
 	if (stateG == 1 && stateB == 3) {
@@ -118,18 +158,16 @@ function GridCanvas() {
 function Player1() {
 	context.beginPath();
 	context.fillStyle = Player1Color;
-	context.arc(CanvasWidth / 4 + Player1X, 0.9 * CanvasHeight - R2 + Player1Y, R2, 0, Math.PI * 2, false);
 	context.arc(CanvasWidth / 4 + Player1X, 0.9 * CanvasHeight - R2 + Player1Y - R1, R1, 0, Math.PI * 2, false);
 	hit1();
-	context.fill();
+	context.drawImage(Player1Img, CanvasWidth / 4 + Player1X - R1, 0.9 * CanvasHeight - R2 - 2 * R1 + Player1Y, 2 * R1, 2 * R1);
 }
 function Player2() {
 	context.beginPath();
 	context.fillStyle = Player2Color;
-	context.arc(3 * CanvasWidth / 4 + Player2X, 0.9 * CanvasHeight - R2 + Player2Y, R2, 0, Math.PI * 2, false);
 	context.arc(3 * CanvasWidth / 4 + Player2X, 0.9 * CanvasHeight - R2 + Player2Y - R1, R1, 0, Math.PI * 2, false);
 	hit2()
-	context.fill();
+	context.drawImage(Player2Img, 3 * CanvasWidth / 4 + Player2X - R1, 0.9 * CanvasHeight - R2 - 2 * R1 + Player2Y, 2 * R1, 2 * R1);
 }
 function hit1() { // проверяем столкновение мяча и 1 игрока
 	if (amthit1 > 3) {
@@ -244,6 +282,7 @@ function Winner() {
 	button_now.style.display = "block";
 	window.cancelAnimationFrame(tick);
 }
+landscape()
 AreaCanvas();
 GridCanvas();
 BallCanvas();
@@ -391,18 +430,25 @@ window.addEventListener("touchstart", touchstart, { passive: false });
 window.addEventListener("touchmove", touchmove, { passive: false });
 window.addEventListener("touchend", touchend, { passive: false });
 window.addEventListener("swipe", jump, false);
+window.addEventListener("resize", resize, false);
+window.addEventListener('beforeunload', beforeunload, false);
 
+
+function beforeunload(EO) {
+	cancelAnimationFrame(tick);
+	EO.preventDefault();
+	EO.returnValue = 'Есть несохранённые изменения. Всё равно уходим?';
+};
 var mySwipe = new Event("swipe", { bubbles: true });
 
 function jump(EO) {
 	EO.preventDefault();
 	if (mySwipe.who == 1)
-		Player1SpeedY = -15 * ratio;
+		Player1SpeedY = -15 * ratioH;
 	if (mySwipe.who == 2)
-		Player2SpeedY = -15 * ratio;
+		Player2SpeedY = -15 * ratioH;
 	mySwipe.who = 0;
 }
-
 function touchstart(EO) {
 	EO.preventDefault();
 	for (const touch of EO.targetTouches) {
@@ -424,11 +470,11 @@ function touchmove(EO) {
 	EO.preventDefault();
 	if (touch1Player) {
 		if (touch1X > Player1X + CanvasWidth / 4) {
-			Player1SpeedX = 6 * ratio;
+			Player1SpeedX = 6 * ratioW;
 			touch1X = EO.changedTouches[touch1Player.identifier].pageX;
 		}
 		if (touch1X < Player1X + CanvasWidth / 4) {
-			Player1SpeedX = -6 * ratio;
+			Player1SpeedX = -6 * ratioW;
 			touch1X = EO.changedTouches[touch1Player.identifier].pageX;
 		}
 		if (touch1Y - EO.changedTouches[touch1Player.identifier].pageY - 50 > touch1X - EO.changedTouches[touch1Player.identifier].pageX && state1 == 0) {
@@ -438,12 +484,12 @@ function touchmove(EO) {
 	}
 	if (touch2Player) {
 		if (touch2X > Player2X + 3 * CanvasWidth / 4) {
-			Player2SpeedX = 6 * ratio;
+			Player2SpeedX = 6 * ratioW;
 			touch2X = EO.changedTouches[touch2Player.identifier].pageX;
 		}
 
 		if (touch2X < Player2X + 3 * CanvasWidth / 4) {
-			Player2SpeedX = -6 * ratio;
+			Player2SpeedX = -6 * ratioW;
 			touch2X = EO.changedTouches[touch2Player.identifier].pageX;
 		}
 		if (touch2Y - EO.changedTouches[touch2Player.identifier].pageY - 50 > touch2X - EO.changedTouches[touch2Player.identifier].pageX && state2 == 0) {
@@ -472,27 +518,25 @@ function keydown(EO) {
 	EO.preventDefault();
 	if (EO.code === "KeyW") {
 		if (state1 == 0)
-			Player1SpeedY = -15 * ratio;
+			Player1SpeedY = -15 * ratioH;
 	}
 	if (EO.code === "KeyD") {
-		Player1SpeedX = 6 * ratio;
+		Player1SpeedX = 6 * ratioW;
 	}
 	if (EO.code === "KeyA") {
-		Player1SpeedX = -6 * ratio;
+		Player1SpeedX = -6 * ratioW;
 	}
 	if (EO.code === "ArrowUp") {
 		if (state2 == 0)
-			Player2SpeedY = -15 * ratio;
+			Player2SpeedY = -15 * ratioH;
 	}
 	if (EO.code === "ArrowRight") {
-		Player2SpeedX = 6 * ratio;
+		Player2SpeedX = 6 * ratioW;
 	}
 	if (EO.code === "ArrowLeft") {
-		Player2SpeedX = -6 * ratio;
+		Player2SpeedX = -6 * ratioW;
 	}
 };
-
-
 function keyup(EO) {
 	EO = EO || window.event;
 	EO.preventDefault();
@@ -518,7 +562,6 @@ function startSound() {
 	winnerAudio.play(); // запускаем звук
 	winnerAudio.pause(); // и сразу останавливаем
 }
-
 function hitSound() {
 	hitAudio.currentTime = 0;
 	hitAudio.play();
@@ -576,9 +619,3 @@ function errorHandler(jqXHR, statusStr, errorStr) {
 	alert(statusStr + ' ' + errorStr);
 }
 
-window.addEventListener('beforeunload', beforeunload, false)
-function beforeunload(EO) {
-	cancelAnimationFrame(tick);
-	EO.preventDefault();
-	EO.returnValue = 'Есть несохранённые изменения. Всё равно уходим?';
-};

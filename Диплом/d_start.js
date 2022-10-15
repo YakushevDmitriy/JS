@@ -13,19 +13,24 @@ P1Color.addEventListener("change", locStor);
 P2Color.addEventListener("change", locStor);
 button.addEventListener("click", check);
 function locStor() {
+	Player1Color = `${P1Color.value}`;
+	Player2Color = `${P2Color.value}`;
+	Player1Name = `${P1Name.value}`;
+	Player2Name = `${P2Name.value}`;
 	localStorage.Player1Color = `${P1Color.value}`;
 	localStorage.Player2Color = `${P2Color.value}`;
 	localStorage.Player1Name = `${P1Name.value}`;
 	localStorage.Player2Name = `${P2Name.value}`;
 }
 
-function check() {
+function check(EO) {
+	locStor();
 	if (Player1Name == '' || Player2Name == '') {
-		alert('Вы не ввели имя первого игрока!')
-		EO.preventDefault();
+		alert('Вы не ввели имя игрока!')
+		return false;
 	}
-	restoreInfo()
-	locStor()
+	restoreInfo();
+	document.documentElement.requestFullscreen();
 }
 
 function storeInfo() {
