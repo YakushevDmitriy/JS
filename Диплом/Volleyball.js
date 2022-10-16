@@ -39,8 +39,10 @@ var
 	angle = 0,
 	amthit1 = 0,//количество подряд ударов 1го
 	amthit2 = 0,//количество подряд ударов 2го
-	score1 = 13,//очки 1го
-	score2 = 13,//очки 2го 
+	amthit1jump = 0,//количество ударов за прыжок
+	amthit2jump = 0,//количество ударов за прыжок
+	score1 = 0,//очки 1го
+	score2 = 0,//очки 2го 
 	R1 = 50 * ratio,
 	R2 = 50 * ratio,
 	win = 0,//победитель
@@ -175,16 +177,17 @@ function hit1() { // проверяем столкновение мяча и 1 �
 			if (context.isPointInPath(x, y)) {
 				hitSound();
 				vibro(100);
-				if (stateB != 2) {
-					BallSpeedX = ratio * (1 + 5 * Math.cos(ii * 10 / 180 * Math.PI));
-					BallSpeedY = ratio * (1 + 20 * Math.sin(ii * 10 / 180 * Math.PI));
+				if (stateB != 2 && amthit1jump == 0) {
+					BallSpeedX = ratio * (2 + 5 * Math.cos(ii * 10 / 180 * Math.PI));
+					BallSpeedY = ratio * (2 + 20 * Math.sin(ii * 10 / 180 * Math.PI));
 					if (state1 != 2 && stateB == 1) {
 						Player1SpeedY = -Player1SpeedY;
 					}
+					amthit1jump = 1;
 					stateB = 0;
 					amthit1++;
 					amthit2 = 0;
-					break
+					return false;
 				}
 			}
 		}
@@ -201,16 +204,17 @@ function hit2() { // проверяем столкновение мяча и 2 �
 			if (context.isPointInPath(x, y)) {
 				hitSound();
 				vibro(100);
-				if (stateB != 2) {
-					BallSpeedX = ratio * (-1 + 5 * Math.cos(ii * 10 / 180 * Math.PI));
-					BallSpeedY = ratio * (-1 + 20 * Math.sin(ii * 10 / 180 * Math.PI));
+				if (stateB != 2 && amthit2jump == 0) {
+					BallSpeedX = ratio * (-2 + 5 * Math.cos(ii * 10 / 180 * Math.PI));
+					BallSpeedY = ratio * (-2 + 20 * Math.sin(ii * 10 / 180 * Math.PI));
 					if (state2 != 2 && stateB == 1) {
 						Player2SpeedY = -Player2SpeedY;
 					}
+					amthit2jump = 1;
 					stateB = 0;
 					amthit2++;
 					amthit1 = 0;
-					break
+					return false;
 				}
 			}
 		}
@@ -257,7 +261,7 @@ function Winner() {
 	context.beginPath();
 	context.fillStyle = 'rgba(0,0,0,0.9)'
 	context.fillRect(CanvasWidth / 3, 0, CanvasWidth / 3, CanvasHeight);
-	context.font = `normal normal ${ratio * 10}vh 'Times New Roman'`;
+	context.font = `normal normal ${ratio * 5}vh 'Times New Roman'`;
 	context.textAlign = 'center';
 	context.textBaseline = 'middle';
 	context.fillStyle = "#ffd700";
@@ -271,7 +275,6 @@ function Winner() {
 		context.fillText(`${Player2Name}`, CanvasWidth / 2, 0.2 * CanvasHeight);
 		context.drawImage(Player1Img, CanvasWidth / 2 - R1, 0.7 * CanvasHeight - 2 * R2, 2 * R1, 2 * R1);
 	}
-
 	context.fill();
 	button_now.style.display = "block";
 	window.cancelAnimationFrame(tick);
@@ -302,7 +305,8 @@ function tick() {
 		Player1SpeedY /= accelY
 	}
 	// приземление 1го
-	if (Player1Y > 0) {
+	if (Player1Y >= 0) {
+		amthit1jump = 0;
 		Player1Y = 0;
 		Player1SpeedY = 0;
 		state1 = 0
@@ -330,7 +334,8 @@ function tick() {
 		Player2SpeedY /= accelY
 	}
 	// приземление 2го
-	if (Player2Y > 0) {
+	if (Player2Y >= 0) {
+		amthit2jump = 0;
 		Player2Y = 0;
 		Player2SpeedY = 0;
 		state2 = 0;
@@ -366,22 +371,21 @@ function tick() {
 		BallSpeedX = -BallSpeedX;
 	if (BallX > CanvasWidth / 2 - BallR)
 		BallSpeedX = -BallSpeedX;
+	if (BallY > CanvasHeight)
+		BallSpeedY = -BallSpeedY;
 
-	//отталкивание от сетки
-	if (BallX > - GridW / 2 - BallR && BallX < GridW / 2 - BallR && BallY < -CanvasHeight / 6 && amthit2 == 0) {
+	//отталкивание от сетки слево 
+	if (BallX > - GridW / 2 - BallR && BallX < GridW / 2 - BallR && BallY < -CanvasHeight / 6 + BallR / 2) {
 		BallSpeedX = -BallSpeedX;
 		BallX = - BallR - GridW / 2;
 	}
-	if (BallX > - GridW / 2 + BallR && BallX < GridW / 2 + BallR && BallY < - CanvasHeight / 6 && amthit1 == 0) {
+	//отталкивание от сетки справа 
+	if (BallX > - GridW / 2 + BallR && BallX < GridW / 2 + BallR && BallY < - CanvasHeight / 6 + BallR / 2) {
 		BallSpeedX = -BallSpeedX;
 		BallX = BallR + GridW / 2;
 	}
-	if (BallX < 0 && BallX > - BallR && BallY < -CanvasHeight / 6 + BallR && amthit2 == 0) {
-		BallSpeedY = -BallSpeedY;
-		BallY = -CanvasHeight / 6 + BallR;
-		stateB = 0;
-	}
-	if (BallX > 0 && BallX < BallR && BallY < -CanvasHeight / 6 + BallR && amthit1 == 0) {
+	//отталкивание от верха сетки
+	if ((BallX < 0 && BallX > - BallR && BallY < -CanvasHeight / 6 + BallR && amthit2 == 0 && stateB == 1) || (BallX > 0 && BallX < BallR && BallY < -CanvasHeight / 6 + BallR && amthit1 == 0 && stateB == 1)) {
 		BallY = -CanvasHeight / 6 + BallR;
 		BallSpeedY = -BallSpeedY;
 		stateB = 0;

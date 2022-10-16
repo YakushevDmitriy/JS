@@ -106,10 +106,10 @@ li {
 	left: 0;
 	right: 0;
 	margin: auto;
-	top: 80vh;
-	width: 35vh;
-	height: 10vh;
-	font-size: 5vh;
+	top:35vW;
+	width: 20vW;
+	height: 5vW;
+	font-size: 3vW;
 }
 #recordstable {
 	border-collapse: collapse;
