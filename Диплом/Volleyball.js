@@ -87,8 +87,8 @@ function start(EO) {
 	requestAnimationFrame(tick);
 }
 function landscape() {
-	/*if (window.screen.orientation.type == 'portrait-primary' || window.screen.orientation.type == 'portrait-secondary')
-		alert('Поверните девайс в горизонтальное положение!')*/
+	if (window.screen.orientation.type == 'portrait-primary' || window.screen.orientation.type == 'portrait-secondary')
+		alert('Поверните девайс в горизонтальное положение!')
 }
 
 Canvas.width = CanvasWidth;
