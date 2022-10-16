@@ -3,11 +3,11 @@ var
 	button_now = document.getElementById('button_now'),
 	Canvas = document.getElementById('Canvas'),
 	context = Canvas.getContext('2d'),
-	CanvasWidth = window.innerWidth,
-	CanvasHeight = window.innerHeight,
-	ratioH = CanvasHeight / 620, /*CanvasHeight=620-величина на разрабатываемом компьютере 
+	CanvasWidth = 1920,
+	CanvasHeight = 1080,
+	ratioH = CanvasHeight / window.innerHeight, /*CanvasHeight=620-величина на разрабатываемом компьютере 
 т.к некоторые параметры игры завязаны на этом значении*/
-	ratioW = CanvasWidth / 1340,
+	ratioW = CanvasWidth / window.innerWidth,
 	ratio = ratioH / 2 + ratioW / 2,
 	stateG = 3, /*0-конец игры( один из игроков набрал 15 очков), 1-подает первый игрок, 2-подает 2й игрок.3-начало игры*/
 	state1 = 0, /*0-игрок 1 в начальном положении, 1-игрок 1 летит вверх, 2-летит вниз */
@@ -52,20 +52,19 @@ var
 	touch2Player,//касание отвечающее за 2го игрока
 	Player1Name = localStorage.Player1Name,
 	Player2Name = localStorage.Player2Name,
-	updatePassword;;
+	updatePassword;
+resize();
 
 var hitAudio = new Audio("hit.mp3"),
 	goalAudio = new Audio("goal.mp3"),
 	winnerAudio = new Audio("winner.mp3");
 function resize() {
-	console.log(window.screen.orientation.type);
-	/*screen.orientation.lock('portrait-primary');*/
 	CanvasWidth = window.innerWidth;
-	CanvasHeight = window.innerHeight;
+	ratioW = CanvasWidth / 1340;
+	CanvasHeight = ratioW * 620;
 	Canvas.width = CanvasWidth;
 	Canvas.height = CanvasHeight;
 	ratioH = CanvasHeight / 620;
-	ratioW = CanvasWidth / 1340;
 	ratio = ratioH / 2 + ratioW / 2;
 	BallR = 40 * ratio;
 	GridW = CanvasWidth / 100;
@@ -88,8 +87,8 @@ function start(EO) {
 	requestAnimationFrame(tick);
 }
 function landscape() {
-	if (window.screen.orientation.type == 'portrait-primary' || window.screen.orientation.type == 'portrait-secondary')
-		alert('Поверните девайс в горизонтальное положение!')
+	/*if (window.screen.orientation.type == 'portrait-primary' || window.screen.orientation.type == 'portrait-secondary')
+		alert('Поверните девайс в горизонтальное положение!')*/
 }
 
 Canvas.width = CanvasWidth;
@@ -266,13 +265,13 @@ function Winner() {
 	context.fillText(`${score1} : ${score2}`, CanvasWidth / 2, 0.35 * CanvasHeight);
 	if (win == Player1Name) {
 		context.fillText(`${Player1Name}`, CanvasWidth / 2, 0.2 * CanvasHeight);
-		context.drawImage(Player1Img, CanvasWidth / 2-R1, 0.7 * CanvasHeight - 2*R2, 2 * R1, 2 * R1);
+		context.drawImage(Player1Img, CanvasWidth / 2 - R1, 0.7 * CanvasHeight - 2 * R2, 2 * R1, 2 * R1);
 	}
 	if (win == Player2Name) {
 		context.fillText(`${Player2Name}`, CanvasWidth / 2, 0.2 * CanvasHeight);
-		context.drawImage(Player1Img, CanvasWidth / 2-R1, 0.7 * CanvasHeight - 2*R2, 2 * R1, 2 * R1);
+		context.drawImage(Player1Img, CanvasWidth / 2 - R1, 0.7 * CanvasHeight - 2 * R2, 2 * R1, 2 * R1);
 	}
-	
+
 	context.fill();
 	button_now.style.display = "block";
 	window.cancelAnimationFrame(tick);
