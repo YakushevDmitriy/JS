@@ -39,8 +39,8 @@ var
 	angle = 0,
 	amthit1 = 0,//количество подряд ударов 1го
 	amthit2 = 0,//количество подряд ударов 2го
-	score1 = 10,//очки 1го
-	score2 = 10,//очки 2го 
+	score1 = 13,//очки 1го
+	score2 = 13,//очки 2го 
 	R1 = 50 * ratio,
 	R2 = 50 * ratio,
 	win = 0,//победитель
@@ -52,8 +52,6 @@ var
 	touch2Player,//касание отвечающее за 2го игрока
 	Player1Name = localStorage.Player1Name,
 	Player2Name = localStorage.Player2Name,
-	Player1Color = localStorage.Player1Color,
-	Player2Color = localStorage.Player2Color,
 	updatePassword;;
 
 var hitAudio = new Audio("hit.mp3"),
@@ -157,14 +155,12 @@ function GridCanvas() {
 }
 function Player1() {
 	context.beginPath();
-	context.fillStyle = Player1Color;
 	context.arc(CanvasWidth / 4 + Player1X, 0.9 * CanvasHeight - R2 + Player1Y - R1, R1, 0, Math.PI * 2, false);
 	hit1();
 	context.drawImage(Player1Img, CanvasWidth / 4 + Player1X - R1, 0.9 * CanvasHeight - R2 - 2 * R1 + Player1Y, 2 * R1, 2 * R1);
 }
 function Player2() {
 	context.beginPath();
-	context.fillStyle = Player2Color;
 	context.arc(3 * CanvasWidth / 4 + Player2X, 0.9 * CanvasHeight - R2 + Player2Y - R1, R1, 0, Math.PI * 2, false);
 	hit2()
 	context.drawImage(Player2Img, 3 * CanvasWidth / 4 + Player2X - R1, 0.9 * CanvasHeight - R2 - 2 * R1 + Player2Y, 2 * R1, 2 * R1);
@@ -267,17 +263,16 @@ function Winner() {
 	context.textBaseline = 'middle';
 	context.fillStyle = "#ffd700";
 	context.fillText(`Winner!!!`, CanvasWidth / 2, 0.1 * CanvasHeight);
+	context.fillText(`${score1} : ${score2}`, CanvasWidth / 2, 0.35 * CanvasHeight);
 	if (win == Player1Name) {
 		context.fillText(`${Player1Name}`, CanvasWidth / 2, 0.2 * CanvasHeight);
-		context.fillStyle = Player1Color;
+		context.drawImage(Player1Img, CanvasWidth / 2-R1, 0.7 * CanvasHeight - 2*R2, 2 * R1, 2 * R1);
 	}
 	if (win == Player2Name) {
 		context.fillText(`${Player2Name}`, CanvasWidth / 2, 0.2 * CanvasHeight);
-		context.fillStyle = Player2Color;
+		context.drawImage(Player1Img, CanvasWidth / 2-R1, 0.7 * CanvasHeight - 2*R2, 2 * R1, 2 * R1);
 	}
-	context.arc(CanvasWidth / 2, 0.7 * CanvasHeight - R2, R2, 0, Math.PI * 2, false);
-	context.arc(CanvasWidth / 2, 0.7 * CanvasHeight - R2 - R1, R1, 0, Math.PI * 2, false);
-	context.fillText(`${score1} : ${score2}`, CanvasWidth / 2, 0.35 * CanvasHeight);
+	
 	context.fill();
 	button_now.style.display = "block";
 	window.cancelAnimationFrame(tick);

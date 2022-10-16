@@ -2,23 +2,15 @@
 var button = document.getElementById('button'),
 	P1Name = document.getElementById('P1Name'),
 	P2Name = document.getElementById('P2Name'),
-	P1Color = document.getElementById('P1Color'),
-	P2Color = document.getElementById('P2Color'),
-	Player1Name, Player2Name, Player1Color, Player2Color,
+	Player1Name, Player2Name,
 	res = {},
 	updatePassword;
 P1Name.addEventListener("change", locStor);
 P2Name.addEventListener("change", locStor);
-P1Color.addEventListener("change", locStor);
-P2Color.addEventListener("change", locStor);
 button.addEventListener("click", check);
 function locStor() {
-	Player1Color = `${P1Color.value}`;
-	Player2Color = `${P2Color.value}`;
 	Player1Name = `${P1Name.value}`;
 	Player2Name = `${P2Name.value}`;
-	localStorage.Player1Color = `${P1Color.value}`;
-	localStorage.Player2Color = `${P2Color.value}`;
 	localStorage.Player1Name = `${P1Name.value}`;
 	localStorage.Player2Name = `${P2Name.value}`;
 }
