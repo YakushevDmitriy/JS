@@ -41,8 +41,8 @@ var
 	amthit2 = 0,//количество подряд ударов 2го
 	amthit1jump = 0,//количество ударов за прыжок
 	amthit2jump = 0,//количество ударов за прыжок
-	score1 = 0,//очки 1го
-	score2 = 0,//очки 2го 
+	score1 = 14,//очки 1го
+	score2 = 14,//очки 2го 
 	R1 = 50 * ratio,
 	R2 = 50 * ratio,
 	win = 0,//победитель
@@ -273,7 +273,7 @@ function Winner() {
 	}
 	if (win == Player2Name) {
 		context.fillText(`${Player2Name}`, CanvasWidth / 2, 0.2 * CanvasHeight);
-		context.drawImage(Player1Img, CanvasWidth / 2 - R1, 0.7 * CanvasHeight - 2 * R2, 2 * R1, 2 * R1);
+		context.drawImage(Player2Img, CanvasWidth / 2 - R1, 0.7 * CanvasHeight - 2 * R2, 2 * R1, 2 * R1);
 	}
 	context.fill();
 	button_now.style.display = "block";
